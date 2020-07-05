@@ -7,10 +7,13 @@
     'category': 'Sales Management',
     'depends': [
         'sale_contract',
+        'shipping',
     ],
     'data': [
         'views/menu.xml',
         'views/qaqc_coa.xml',
+        'security/qaqc_security.xml',
+        'security/ir.model.access.csv',
     ],
     'qweb': [
         # 'static/src/xml/cashback_templates.xml',

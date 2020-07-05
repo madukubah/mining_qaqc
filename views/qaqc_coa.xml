@@ -9,10 +9,8 @@
         <field name="arch" type="xml">
             <tree string="COA List">
                 <field name="name" />
-                <field name="ni_spec" />
-                <field name="fe_spec" />
-                <field name="moisture_spec" />
-                <field name="mineral_spec" />
+                <field name="date" />
+                <field name="state" />
             </tree>
         </field>
     </record>
@@ -23,13 +21,53 @@
             <field name="priority">1</field>
             <field name="arch" type="xml">
                 <form string="COA">
+                    <header>
+                        <button name="button_final" string="Final" type="object" states="draft" class="btn-primary" />
+                        <button name="button_draft" string="Set to Draft" type="object" states="final" class="btn-primary" />
+                        <field name="state" widget="statusbar" statusbar_visible="draft,final"/>
+                    </header>
                     <sheet>
+                        <div class="oe_title">
+                            <label for="name" class="oe_edit_only" string="COA Name" ></label>
+                            <h1>
+                                <field name="name" />
+                            </h1>
+                        </div>
                         <group>
-                            <field name="name" />
-                            <field name="ni_spec" />
-                            <field name="fe_spec" />
-                            <field name="moisture_spec" />
-                            <field name="mineral_spec" />
+                            <group>
+                                <field name="date" />
+                                <field name="shipping_id" />
+                                <field name="loading_port" />
+                                <field name="discharging_port" />
+                                <field name="quantity" />
+                            </group>
+                        </group>
+                        <group class="oe_title">
+                            <label for="initial_date" string="Date" ></label>
+                            <group>
+                                <field name="initial_date" />
+                            </group>
+                            <group>
+                                <field name="final_date" />
+                            </group>
+                        </group>
+                        <group>
+                            <group>
+                                <field name="mc_spec" />
+                                <field name="ni_spec" />
+                                <field name="fe_spec" />
+                                <field name="co_spec" />
+                                <field name="p_spec" />
+                                <field name="s_spec" />
+                            </group>
+                            <group>
+                                <field name="sio2_spec" />
+                                <field name="mgo_spec" />
+                                <field name="al2o3_spec" />
+                                <field name="cao_spec" />
+                                <field name="cr2o3_spec" />
+                                <field name="mno_spec" />
+                            </group>
                         </group>
                     </sheet>
                 </form>
