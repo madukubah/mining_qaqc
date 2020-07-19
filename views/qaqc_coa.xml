@@ -59,6 +59,7 @@
                                 <field name="co_spec" />
                                 <field name="p_spec" />
                                 <field name="s_spec" />
+                                <field name="moisture_spec" />
                             </group>
                             <group>
                                 <field name="sio2_spec" />
