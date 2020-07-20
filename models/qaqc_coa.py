@@ -35,6 +35,7 @@ class QaqcCoa(models.Model):
 	state = fields.Selection([
         ('draft', 'Draft'), 
 		('final', 'Final'),
+		('done', 'Done'),
         ], string='Status', readonly=True, copy=False, index=True, track_visibility='onchange', default='draft')
 
 
@@ -42,8 +43,13 @@ class QaqcCoa(models.Model):
 	def button_final(self):
 		if not self.env.user.has_group('sale_qaqc.qaqc_group_manager') :
 			raise UserError(_("You are not manager") )
-
 		self.state = 'final'
+
+	@api.multi
+	def button_done(self):
+		if not self.env.user.has_group('sale_qaqc.qaqc_group_manager') :
+			raise UserError(_("You are not manager") )
+		self.state = 'done'
 
 	@api.multi
 	def button_draft(self):

@@ -22,9 +22,10 @@
             <field name="arch" type="xml">
                 <form string="COA">
                     <header>
-                        <button name="button_final" string="Final" type="object" states="draft" class="btn-primary" />
                         <button name="button_draft" string="Set to Draft" type="object" states="final" class="btn-primary" />
-                        <field name="state" widget="statusbar" statusbar_visible="draft,final"/>
+                        <button name="button_final" string="Final" type="object" states="draft" class="btn-primary" />
+                        <button name="button_done" string="Done" type="object" states="final" class="btn-primary"  />
+                        <field name="state" widget="statusbar" statusbar_visible="draft,final,done"/>
                     </header>
                     <sheet>
                         <div class="oe_title">
@@ -51,6 +52,7 @@
                                 <field name="final_date" />
                             </group>
                         </group>
+
                         <group>
                             <group>
                                 <field name="mc_spec" />
@@ -69,6 +71,7 @@
                                 <field name="cr2o3_spec" />
                                 <field name="mno_spec" />
                             </group>
+
                         </group>
                     </sheet>
                 </form>
