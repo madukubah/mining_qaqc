@@ -29,7 +29,7 @@ class QaqcCoa(models.Model):
 	cao_spec = fields.Float( string="CaO (%)", required=True, default=0, digits=0, readonly=True, states={'draft': [('readonly', False)]} )
 	cr2o3_spec = fields.Float( string="Cr2O3 (%)", required=True, default=0, digits=0, readonly=True, states={'draft': [('readonly', False)]} )
 	mno_spec = fields.Float( string="MnO (%)", required=True, default=0, digits=0, readonly=True, states={'draft': [('readonly', False)]} )
-	moisture_spec = fields.Float( string="Moisture (%)", required=True, default=0, digits=0, readonly=True, states={'draft': [('readonly', False)]} )
+	# moisture_spec = fields.Float( string="Moisture (%)", required=True, default=0, digits=0, readonly=True, states={'draft': [('readonly', False)]} )
 	
 
 	state = fields.Selection([
