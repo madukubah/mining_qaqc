@@ -1,0 +1,31 @@
+<odoo>
+	<data>
+		
+		<!-- tambahi field surveyor di form-->
+		<record id="partner_surveyor" model="ir.ui.view">
+			<field name="name">partner.surveyor</field>
+			<field name="model">res.partner</field>
+			<field name="inherit_id" ref="base.view_partner_form" />
+            <field name="context">{"search_default_is_surveyor":1}</field>
+			<field name="arch" type="xml">
+				<field name="website" position="after">
+					<field name="is_surveyor" />
+					<field name="surveyor" />
+				</field>
+			</field>
+		</record>
+
+        <record id="view_res_partner_filter0" model="ir.ui.view">
+            <field name="name">res.partner.select0</field>
+            <field name="model">res.partner</field>
+            <field name="inherit_id" ref="base.view_res_partner_filter"/>
+            <field name="arch" type="xml">
+                <search string="Search Partner">
+                   <filter string="Surveyor" 
+    	           	 name="is_surveyor" domain="[('is_surveyor','=',1)]" help="Surveyor"/>
+               </search>
+            </field>
+        </record>
+
+	</data>
+</odoo>

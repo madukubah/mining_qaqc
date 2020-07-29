@@ -41,6 +41,7 @@
                                 <field name="loading_port" />
                                 <field name="discharging_port" />
                                 <field name="quantity" />
+                                <field name="surveyor_id" />
                             </group>
                         </group>
                         <group class="oe_title">

@@ -17,6 +17,8 @@ class QaqcCoa(models.Model):
 	discharging_port = fields.Many2one("shipping.port", related="shipping_id.discharging_port", string="Discharging Port", readonly=True, store=True, ondelete="restrict" )
 	quantity = fields.Float( string="Quantity (WMT)", related="shipping_id.quantity", required=True, default=0, digits=0, store=True, readonly=True )
 
+	surveyor_id	= fields.Many2one('res.partner', string='Surveyor', required=True, domain=[ ('is_surveyor','=',True)] )
+
 	mc_spec = fields.Float( string="MC (%)", required=True, default=0, digits=0, readonly=True, states={'draft': [('readonly', False)]} )
 	ni_spec = fields.Float( string="Ni (%)", required=True, default=0, digits=0, readonly=True, states={'draft': [('readonly', False)]} )
 	fe_spec = fields.Float( string="Fe (%)", required=True, default=0, digits=0, readonly=True, states={'draft': [('readonly', False)]} )
