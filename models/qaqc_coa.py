@@ -14,6 +14,8 @@ class QaqcCoa(models.Model):
 
 	shipping_id = fields.Many2one("shipping.shipping", string="Shipping", required=True, store=True, ondelete="restrict", domain=[ ('state','=',"approve")], readonly=True, states={'draft': [('readonly', False)]}  )
 	
+	sale_contract_id = fields.Many2one("sale.contract", related="shipping_id.sale_contract_id", string="Contract", readonly=True, store=True, ondelete="restrict" )
+
 	loading_port = fields.Many2one("shipping.port", related="shipping_id.loading_port", string="Loading Port", readonly=True, store=True, ondelete="restrict" )
 	discharging_port = fields.Many2one("shipping.port", related="shipping_id.discharging_port", string="Discharging Port", readonly=True, store=True, ondelete="restrict" )
 	quantity = fields.Float( string="Quantity (WMT)", related="shipping_id.quantity", required=True, default=0, digits=0, store=True, readonly=True )
@@ -67,7 +69,19 @@ class QaqcCoa(models.Model):
 		for rec in self:
 			if( rec.shipping_id ):
 				rec.name = rec.shipping_id.name
+				rec.sale_contract_id = rec.shipping_id.sale_contract_id
 				rec.loading_port = rec.shipping_id.loading_port
 				rec.discharging_port = rec.shipping_id.discharging_port
 				rec.quantity = rec.shipping_id.quantity
+				
+				if rec.surveyor_id :
+					rec.name = rec.name + "/" + rec.surveyor_id.name
+
+	@api.onchange("surveyor_id" )
+	def _surveyor_change(self):
+		for rec in self:
+			if( rec.shipping_id and rec.surveyor_id ):
+				rec.name = rec.shipping_id.name
+				rec.name = rec.name + "/" + rec.surveyor_id.name.upper()
+
 	

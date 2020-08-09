@@ -38,6 +38,7 @@
                             <group>
                                 <field name="date" />
                                 <field name="shipping_id" />
+                                <field name="sale_contract_id" />
                                 <field name="loading_port" />
                                 <field name="discharging_port" />
                                 <field name="quantity" />
