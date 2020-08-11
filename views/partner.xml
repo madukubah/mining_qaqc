@@ -10,7 +10,7 @@
 			<field name="arch" type="xml">
 				<field name="website" position="after">
 					<field name="is_surveyor" />
-					<field name="surveyor" />
+					<field name="surveyor" attrs="{'invisible': [ ('is_surveyor', '=', False) ] }" />
 				</field>
 			</field>
 		</record>

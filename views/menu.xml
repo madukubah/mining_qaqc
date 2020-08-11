@@ -18,7 +18,7 @@
     </record>
 
     
-    <menuitem id="qaqc_top" name="QAQC" sequence="1" web_icon="sale_qaqc,static/description/icon.png" />
+    <menuitem id="qaqc_top" name="QAQC" sequence="3" web_icon="sale_qaqc,static/description/icon.png" />
 
     <menuitem id="qaqc_sub" name="QAQC" sequence="1" 
 			parent="qaqc_top"/>
