@@ -9,4 +9,4 @@ class Partner(models.Model):
         ('intertek', 'Intertek'), 
 		('carsurin', 'Carsurin'),
 		('internal', 'Internal')
-        ], string='Surveyor', copy=False, index=True, store=True )
+        ], string='Surveyor', copy=True, index=True, store=True )

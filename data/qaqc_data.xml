@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+ 
+        <record id="sequence_qaqc_barge" model="ir.sequence">
+            <field name="name">qaqc_barge</field>
+            <field name="code">qaqc_barge</field>
+            <field name="prefix">QAQC/BARGE/</field>
+            <field name="padding">4</field>
+            <field name="number_next">1</field>
+            <field name="number_increment">1</field>
+        </record>
+
+        <record id="dp_qaqc" model="decimal.precision">
+            <field name="name">QAQC</field>
+            <field name="digits">3</field>
+        </record>
+
+    </data>
+</odoo>

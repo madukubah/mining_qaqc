@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="qaqc_coa_order_list" model="ir.ui.view">
+        <field name="name">qaqc_coa_order_list</field>
+        <field name="model">qaqc.coa.order</field>
+        <field name="type">tree</field>
+        <field name="priority" eval="8"/>
+        <field name="arch" type="xml">
+            <tree string="COA List">
+                <field name="name" />
+                <field name="surveyor_id" />
+                <field name="location_id" />
+                <field name="date" />
+                <field name="state" />
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_qaqc_coa_order_form" model="ir.ui.view">
+            <field name="name">qaqc.coa.order.form</field>
+            <field name="model">qaqc.coa.order</field>
+            <field name="priority">1</field>
+            <field name="arch" type="xml">
+                <form string="COA">
+                    <header>
+                        <button name="button_draft" string="Set to Draft" type="object" states="final" class="btn-primary" groups="mining_qaqc.qaqc_group_manager" />
+                        <button name="button_final" string="Final" type="object" states="draft" class="btn-primary" groups="mining_qaqc.qaqc_group_manager" />
+                        <button name="button_done" string="Done" type="object" states="final" class="btn-primary" groups="mining_qaqc.qaqc_group_manager"  />
+                        <button name="action_view_change_product_quantity" string="Update Qty On Hand" type="object" attrs="{'invisible': [('product_id', '=', False )]}" groups="mining_qaqc.qaqc_group_manager" />
+                        <field name="state" widget="statusbar" statusbar_visible="draft,final,done"/>
+                    </header>
+                    <sheet>
+                        <div class="oe_title">
+                            <label for="name" class="oe_edit_only" string="COA Name" ></label>
+                            <h1>
+                                <field name="name" />
+                            </h1>
+                        </div>
+                        <group>
+                            <group>
+                                <field name="date" />
+                                <field name="location_id" />
+                                <field name="product_id" />
+                                <field name="product_uom" />
+                                <field name="quantity" />
+                                <field name="rit" />
+                                <field name="ton_p_rit" />
+                                <field name="surveyor_id" />
+                            </group>
+                        </group>
+                        <group class="oe_title">
+                            <label for="initial_date" string="Date" ></label>
+                            <group>
+                                <field name="initial_date" />
+                            </group>
+                            <group>
+                                <field name="final_date" />
+                            </group>
+                        </group>
+
+
+                        <notebook>
+                            <page string="Elements Specifications"  >
+                                <field name="element_specs" >
+                                    <tree string="Elements Specifications" >
+                                        <field name="element_id" />
+                                        <field name="spec" />
+									</tree>
+                                </field >
+                            </page>
+                        </notebook>
+                        
+                    </sheet>
+                </form>
+            </field>
+    </record>
+
+    <record id="view_qaqc_element_spec_form" model="ir.ui.view">
+            <field name="name">qaqc.element.spec.form</field>
+            <field name="model">qaqc.element.spec</field>
+            <field name="priority">1</field>
+            <field name="arch" type="xml">
+                <form string="Log">
+                    <sheet>
+                        <group>
+                            <field name="coa_order_id" invisible="1"/>
+                            <field name="element_id" />
+                            <field name="spec" />
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+    </record>
+</odoo>

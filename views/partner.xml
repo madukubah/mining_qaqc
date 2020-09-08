@@ -21,7 +21,7 @@
             <field name="inherit_id" ref="base.view_res_partner_filter"/>
             <field name="arch" type="xml">
                 <search string="Search Partner">
-                   <filter string="Surveyor" 
+                   <filter string="Surveyor"
     	           	 name="is_surveyor" domain="[('is_surveyor','=',1)]" help="Surveyor"/>
                </search>
             </field>

@@ -4,7 +4,14 @@
 
     <record model="ir.actions.act_window" id="action_coa">
         <field name="name">COA</field>
-        <field name="res_model">qaqc.coa</field>
+        <field name="res_model">qaqc.coa.order</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <record model="ir.actions.act_window" id="action_chemical_element">
+        <field name="name">Elements</field>
+        <field name="res_model">qaqc.chemical.element</field>
         <field name="view_type">form</field>
         <field name="view_mode">tree,form</field>
     </record>
@@ -18,7 +25,7 @@
     </record>
 
     
-    <menuitem id="qaqc_top" name="QAQC" sequence="3" web_icon="sale_qaqc,static/description/icon.png" />
+    <menuitem id="qaqc_top" name="QAQC" sequence="3" web_icon="mining_qaqc,static/description/icon.png" />
 
     <menuitem id="qaqc_sub" name="QAQC" sequence="1" 
 			parent="qaqc_top"/>
@@ -29,11 +36,22 @@
                 action="action_coa"
                 sequence= "1"
                 />
+    
     <menuitem id="qaqc_surveyor" 
             name="Surveyor" 
-            sequence="1" 
+            sequence="2" 
 			parent="qaqc_top"
             action="action_surveyor"
             />
+    
+    <menuitem id="qaqc_config" name="Configuration" sequence="3" 
+			parent="qaqc_top"/>
+    
+        <menuitem name="Mining Elements"
+                id="qaqc_chemical_element"
+                parent="qaqc_config" 
+                action="action_chemical_element"
+                sequence= "1"
+                />
 
 </odoo>
