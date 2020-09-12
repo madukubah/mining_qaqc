@@ -3,10 +3,21 @@ from odoo import api, fields, models, _
 from odoo.exceptions import UserError, ValidationError
 import time
 from odoo.addons import decimal_precision as dp
+from odoo.tools.float_utils import float_round
+import logging
+_logger = logging.getLogger(__name__)
 
 class QaqcCoa(models.Model):
 	_name = "qaqc.coa.order"
 	_order = "id desc"
+
+	@api.multi
+	def _check_quantity(self):
+		for rec in self:
+			product_qty = rec.product_id.with_context({'location' : rec.location_id.id})
+			if ( rec.quantity != product_qty.qty_available ) :
+				return False	
+		return True
 
 	READONLY_STATES = {
         'final': [('readonly', True)],
@@ -17,8 +28,12 @@ class QaqcCoa(models.Model):
 	date = fields.Date('Report Date', help='',  default=time.strftime("%Y-%m-%d"), states=READONLY_STATES  )
 	initial_date = fields.Date('Date of Initial', help='', required=True, states=READONLY_STATES  )
 	final_date = fields.Date('Date of Final', help='', required=True, states=READONLY_STATES  )
+	warehouse_id = fields.Many2one(
+            'stock.warehouse', 'Origin Warehouse',
+            ondelete="restrict", required=True, states=READONLY_STATES)
 	location_id = fields.Many2one(
             'stock.location', 'Location',
+			# related="warehouse_id.lot_stock_id",
 			domain=[ ('usage','=',"internal")  ],
             ondelete="restrict", required=True, states=READONLY_STATES)
 	product_id = fields.Many2one('product.product', 'Material', required=True, states=READONLY_STATES )
@@ -28,7 +43,9 @@ class QaqcCoa(models.Model):
             required=True,
 			domain=[ ('category_id.name','=',"Mining")  ],
             default=lambda self: self._context.get('product_uom', False), states=READONLY_STATES)
-	quantity = fields.Float( string="Quantity (WMT)", default=0, digits=dp.get_precision('QAQC'), states=READONLY_STATES, store=True, compute="_compute_quantity" )
+	quantity = fields.Float( string="Actual Quantity (WMT)", default=0, digits=dp.get_precision('QAQC'), states=READONLY_STATES, store=True )
+	curr_quantity = fields.Float( string="Qurrent Quantity (WMT)", default=0, digits=dp.get_precision('QAQC'), readonly=True, store=True, compute="_compute_curr_quantity" )
+
 	rit = fields.Float( string="Rit", default=0, digits=0, states=READONLY_STATES )
 	ton_p_rit = fields.Float( string="Ton/Rit", default=0, digits=0, states=READONLY_STATES )
 	surveyor_id	= fields.Many2one('res.partner', string='Surveyor', required=True, domain=[ ('is_surveyor','=',True)], states=READONLY_STATES )
@@ -46,7 +63,10 @@ class QaqcCoa(models.Model):
 
 	@api.multi
 	def button_final(self):
-		self.state = 'final'
+		if self._check_quantity() :
+			self.state = 'final'
+		else :
+			raise UserError(_("Please Update Quantity First as same as Actual Quantity") )
 
 	@api.multi
 	def button_done(self):
@@ -55,7 +75,6 @@ class QaqcCoa(models.Model):
 	@api.multi
 	def button_draft(self):
 		self.state = 'draft'
-
 
 	@api.model
 	def create(self, values):
@@ -74,22 +93,27 @@ class QaqcCoa(models.Model):
 				if rec.surveyor_id :
 					rec.name = rec.name + "/" + rec.surveyor_id.surveyor.upper()
 				
-	@api.onchange("location_id", "product_id" )
-	def _compute_quantity(self):
+	@api.depends("location_id", "product_id" )
+	def _compute_curr_quantity(self):
 		for rec in self:
 			if( rec.location_id and rec.product_id ):
-				StockQuantSudo = self.env['stock.quant'].sudo()
-				stock_quants = StockQuantSudo.search([ ("product_id", '=', rec.product_id.id ), ("location_id", '=', rec.location_id.id ) ])
-				# qty = self.product_uom_id._compute_quantity(self.product_qty, self.product_id.uom_id)
-				rec.quantity = sum([ stock_quant.qty for stock_quant in stock_quants ])
+				product_qty = rec.product_id.with_context({'location' : rec.location_id.id})
+				rec.curr_quantity = product_qty.qty_available
 	
+	# @api.depends( "product_id.stock_quant_ids", "product_id.stock_move_ids" )
+	# def _compute_quantity(self):
+	# 	for rec in self:
+	# 		if( rec.location_id and rec.product_id ):
+	# 			return {}
+				# rec.quantity = rec.actual_quantity
+
 	@api.onchange("product_uom")
 	def _compute_ton_p_rit(self):
 		for rec in self:
 			if( rec.product_uom ):
-				rec.rit = rec.product_id.uom_id._compute_quantity( rec.quantity , rec.product_uom ) 
+				rec.rit = rec.product_id.uom_id._compute_quantity( rec.curr_quantity , rec.product_uom ) 
 				rec.rit = rec.rit if rec.rit else 1
-				rec.ton_p_rit = rec.quantity / rec.rit
+				rec.ton_p_rit = rec.curr_quantity / rec.rit
 				
 
 	@api.onchange("surveyor_id" )
@@ -120,26 +144,10 @@ class QaqcCoa(models.Model):
 				"default_new_quantity" : self.quantity,
 				 }
 		}
-		# '''
-    	# This function returns an action that display existing picking orders of given purchase order ids.
-        # When only one found, show the picking immediately.
-        # '''
-		# action = self.env.ref('stock.action_picking_tree')
-		# result = action.read()[0]
-
-        # #override the context to get rid of the default filtering on picking type
-		# result.pop('id', None)
-		# result['context'] = {}
-		# pick_ids = sum([order.picking_ids.ids for order in self], [])
-        # #choose the view_mode accordingly
-		# if len(pick_ids) > 1:
-		# 	result['domain'] = "[('id','in',[" + ','.join(map(str, pick_ids)) + "])]"
-		# elif len(pick_ids) == 1:
-		# 	res = self.env.ref('stock.view_picking_form', False)
-		# 	result['views'] = [(res and res.id or False, 'form')]
-		# 	result['res_id'] = pick_ids and pick_ids[0] or False
-		# return result
-
+	
+	# _constraints = [ 
+    #     (_check_quantity, 'Please Update Quantity First as same as Actual Quantity', ['quantity','actual_quantity'] ) ,
+    #     ]
 class QaqcElementSpec(models.Model):
 	_name = "qaqc.element.spec"
 
