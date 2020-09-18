@@ -3,7 +3,7 @@
 
 
     <record model="ir.actions.act_window" id="action_coa">
-        <field name="name">COA</field>
+        <field name="name">Assay Result Barge</field>
         <field name="res_model">qaqc.coa.order</field>
         <field name="view_type">form</field>
         <field name="view_mode">tree,form</field>
@@ -30,7 +30,7 @@
     <menuitem id="qaqc_sub" name="QAQC" sequence="1" 
 			parent="qaqc_top"/>
     
-        <menuitem name="COA"
+        <menuitem name="Assay Result Barge"
                 id="qaqc_coa"
                 parent="qaqc_sub" 
                 action="action_coa"
