@@ -6,7 +6,8 @@
     'author': 'Technoindo.com',
     'category': 'Sales Management',
     'depends': [
-        "stock"
+        "stock",
+        "barge",
     ],
     'data': [
         'views/menu.xml',
@@ -26,6 +27,6 @@
         # 'demo/sale_agent_demo.xml',
     ],
     "installable": True,
-	"auto_instal": False,
+	"auto_instal": True,
 	"application": True,
 }

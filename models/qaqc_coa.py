@@ -28,18 +28,23 @@ class QaqcCoa(models.Model):
 	date = fields.Date('Report Date', help='',  default=time.strftime("%Y-%m-%d"), states=READONLY_STATES  )
 	initial_date = fields.Date('Date of Initial', help='', required=True, states=READONLY_STATES  )
 	final_date = fields.Date('Date of Final', help='', required=True, states=READONLY_STATES  )
+	barge_id = fields.Many2one('shipping.barge', string='Barge', states=READONLY_STATES, domain=[ ('active','=',True)], required=True, change_default=True, index=True, track_visibility='always')
+
 	warehouse_id = fields.Many2one(
             'stock.warehouse', 'Origin Warehouse',
-            ondelete="restrict", required=True, states=READONLY_STATES)
+			readonly=True,
+			store=True,copy=True,
+			compute="_onchange_barge_id",
+            ondelete="restrict" )
 	location_id = fields.Many2one(
             'stock.location', 'Location',
-			# related="warehouse_id.lot_stock_id",
-			domain=[ ('usage','=',"internal")  ],
-            ondelete="restrict", required=True, states=READONLY_STATES)
+			readonly=True,
+			store=True,copy=True,
+			compute="_onchange_barge_id",
+            ondelete="restrict" )
 	product_id = fields.Many2one('product.product', 'Material', required=True, states=READONLY_STATES )
 	product_uom = fields.Many2one(
             'product.uom', 'Product Unit of Measure', 
-			# related='product_id.uom_id',
             required=True,
 			domain=[ ('category_id.name','=',"Mining")  ],
             default=lambda self: self._context.get('product_uom', False), states=READONLY_STATES)
@@ -83,6 +88,13 @@ class QaqcCoa(models.Model):
 		res = super(QaqcCoa, self ).create(values)
 		return res
 
+	@api.depends("barge_id" )
+	def _onchange_barge_id(self):
+		for rec in self:
+			if( rec.barge_id ):
+				rec.location_id = rec.barge_id.location_id
+				rec.warehouse_id = rec.barge_id.warehouse_id
+				
 
 	@api.onchange("location_id" )
 	def _set_name(self):
@@ -100,13 +112,6 @@ class QaqcCoa(models.Model):
 				product_qty = rec.product_id.with_context({'location' : rec.location_id.id})
 				rec.curr_quantity = product_qty.qty_available
 	
-	# @api.depends( "product_id.stock_quant_ids", "product_id.stock_move_ids" )
-	# def _compute_quantity(self):
-	# 	for rec in self:
-	# 		if( rec.location_id and rec.product_id ):
-	# 			return {}
-				# rec.quantity = rec.actual_quantity
-
 	@api.onchange("product_uom")
 	def _compute_ton_p_rit(self):
 		for rec in self:
@@ -145,9 +150,6 @@ class QaqcCoa(models.Model):
 				 }
 		}
 	
-	# _constraints = [ 
-    #     (_check_quantity, 'Please Update Quantity First as same as Actual Quantity', ['quantity','actual_quantity'] ) ,
-    #     ]
 class QaqcElementSpec(models.Model):
 	_name = "qaqc.element.spec"
 
