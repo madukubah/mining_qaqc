@@ -27,7 +27,7 @@
                         <button name="button_draft" string="Set to Draft" type="object" states="final" class="btn-primary" groups="mining_qaqc.qaqc_group_manager" />
                         <button name="button_final" string="Final" type="object" states="draft" class="btn-primary" groups="mining_qaqc.qaqc_group_manager" />
                         <button name="button_done" string="Done" type="object" states="final" class="btn-primary" groups="mining_qaqc.qaqc_group_manager"  />
-                        <button name="action_view_change_product_quantity" string="Update Qty" class="btn-primary" type="object" attrs="{'invisible': [('product_id', '=', False )]}" groups="mining_qaqc.qaqc_group_manager" />
+                        <button name="action_view_change_product_quantity" string="Update Qty" class="btn-primary" type="object" attrs="{'invisible': [ '|', ('product_id', '=', False ), ('state', '!=', 'draft' )]}" groups="mining_qaqc.qaqc_group_manager" />
                         <field name="state" widget="statusbar" statusbar_visible="draft,final,done"/>
                     </header>
                     <sheet>

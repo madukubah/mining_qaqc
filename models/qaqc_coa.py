@@ -15,9 +15,9 @@ class QaqcCoa(models.Model):
 	def _check_quantity(self):
 		for rec in self:
 			product_qty = rec.product_id.with_context({'location' : rec.location_id.id})
-			if ( rec.quantity != product_qty.qty_available ) :
-				return False	
-		return True
+			if ( rec.quantity > product_qty.qty_available ) :
+				raise UserError(_("Actual Quantity Cannot Bigger Than Qty on Location ( Qty on Location is %s )" % product_qty.qty_available ) )
+				
 
 	READONLY_STATES = {
         'final': [('readonly', True)],
@@ -49,7 +49,7 @@ class QaqcCoa(models.Model):
 			domain=[ ('category_id.name','=',"Mining")  ],
             default=lambda self: self._context.get('product_uom', False), states=READONLY_STATES)
 	quantity = fields.Float( string="Actual Quantity (WMT)", default=0, digits=dp.get_precision('QAQC'), states=READONLY_STATES, store=True )
-	curr_quantity = fields.Float( string="Qurrent Quantity (WMT)", default=0, digits=dp.get_precision('QAQC'), readonly=True, store=True, compute="_compute_curr_quantity" )
+	curr_quantity = fields.Float( string="Qurrent Quantity (WMT)", default=0, digits=dp.get_precision('QAQC'), readonly=True, compute="_compute_curr_quantity" )
 
 	rit = fields.Float( string="Rit", default=0, digits=0, states=READONLY_STATES )
 	ton_p_rit = fields.Float( string="Ton/Rit", default=0, digits=0, states=READONLY_STATES )
@@ -68,10 +68,8 @@ class QaqcCoa(models.Model):
 
 	@api.multi
 	def button_final(self):
-		if self._check_quantity() :
-			self.state = 'final'
-		else :
-			raise UserError(_("Please Update Quantity First as same as Actual Quantity") )
+		self._check_quantity()
+		self.state = 'final'
 
 	@api.multi
 	def button_done(self):
@@ -116,7 +114,7 @@ class QaqcCoa(models.Model):
 				product_qty = rec.product_id.with_context({'location' : rec.location_id.id})
 				rec.curr_quantity = product_qty.qty_available
 	
-	@api.onchange("product_uom")
+	@api.onchange("product_uom", "curr_quantity")
 	def _compute_ton_p_rit(self):
 		for rec in self:
 			if( rec.product_uom ):
@@ -161,7 +159,7 @@ class QaqcCoa(models.Model):
 				raise UserError(_("Only Delete data in Draft State") )
 		
 		return super(QaqcCoa, self ).unlink()
-		
+
 class QaqcElementSpec(models.Model):
 	_name = "qaqc.element.spec"
 
