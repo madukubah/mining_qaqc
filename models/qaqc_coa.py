@@ -75,6 +75,10 @@ class QaqcCoa(models.Model):
 
 	@api.multi
 	def button_done(self):
+		if self.state == 'done' :
+			return
+		if self.state != 'final':
+			raise UserError(_("Please Set Assay Result Barge To Final First") )
 		self.state = 'done'
 
 	@api.multi
@@ -149,7 +153,15 @@ class QaqcCoa(models.Model):
 				"default_new_quantity" : self.quantity,
 				 }
 		}
-	
+
+	@api.multi
+	def unlink(self):
+		for rec in self:
+			if rec.state != "draft" :
+				raise UserError(_("Only Delete data in Draft State") )
+		
+		return super(QaqcCoa, self ).unlink()
+		
 class QaqcElementSpec(models.Model):
 	_name = "qaqc.element.spec"
 
