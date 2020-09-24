@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="qaqc_qaqc_element_spec_list" model="ir.ui.view">
+        <field name="name">qaqc.element.spec.list</field>
+        <field name="model">qaqc.element.spec</field>
+        <field name="type">tree</field>
+        <field name="priority" eval="8"/>
+        <field name="arch" type="xml">
+            <tree string="Elements Specifications List">
+                 <field name="element_id" />
+                <field name="spec" />
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_qaqc_element_spec_form" model="ir.ui.view">
+            <field name="name">qaqc.element.spec.form</field>
+            <field name="model">qaqc.element.spec</field>
+            <field name="priority">1</field>
+            <field name="arch" type="xml">
+                <form string="Elements Specifications">
+                    <sheet>
+                        <group>
+                            <field name="coa_order_id" invisible="1"/>
+                            <field name="coa_order_id" invisible="1"/>
+                            <field name="element_id" />
+                            <field name="spec" />
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+    </record>
+</odoo>

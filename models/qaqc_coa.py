@@ -5,7 +5,7 @@ import time
 from odoo.addons import decimal_precision as dp
 from odoo.tools.float_utils import float_round
 import logging
-_logger = logging.getLogger(__name__)
+_logger = logging.getLogger( __name__ )
 
 class QaqcCoa(models.Model):
 	_name = "qaqc.coa.order"
@@ -64,6 +64,7 @@ class QaqcCoa(models.Model):
 		('final', 'Final'),
 		('done', 'Done'),
         ], string='Status', readonly=True, copy=False, index=True, track_visibility='onchange', default='draft')
+	user_id = fields.Many2one('res.users', string='User', index=True, track_visibility='onchange', default=lambda self: self.env.user)
 
 
 	@api.multi
@@ -159,10 +160,3 @@ class QaqcCoa(models.Model):
 				raise UserError(_("Only Delete data in Draft State") )
 		
 		return super(QaqcCoa, self ).unlink()
-
-class QaqcElementSpec(models.Model):
-	_name = "qaqc.element.spec"
-
-	coa_order_id = fields.Many2one("qaqc.coa.order", string="COA", ondelete="restrict" )
-	element_id = fields.Many2one("qaqc.chemical.element", required=True, string="Element", ondelete="restrict" )
-	spec = fields.Float( string="Spec", required=True, default=0, digits=dp.get_precision('QAQC') )

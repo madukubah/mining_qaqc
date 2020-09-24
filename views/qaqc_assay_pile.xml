@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="qaqc_assay_pile_list" model="ir.ui.view">
+        <field name="name">qaqc.assay.pile.list</field>
+        <field name="model">qaqc.assay.pile</field>
+        <field name="type">tree</field>
+        <field name="priority" eval="8"/>
+        <field name="arch" type="xml">
+            <tree string="Assay Result Pile List" decoration-muted="state=='cancel'" decoration-success="state=='done'" >
+                <field name="name" />
+                <field name="location_id" />
+                <field name="product_id" />
+                <field name="lot_id" />
+                <field name="state" />
+                <field name="active" invisible="1" />
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_qaqc_assay_pile_form" model="ir.ui.view">
+            <field name="name">qaqc.assay.pile.form</field>
+            <field name="model">qaqc.assay.pile</field>
+            <field name="priority">1</field>
+            <field name="arch" type="xml">
+                <form string="Assay Result Pile">
+                    <header>
+                        <button name="button_draft" string="Set to Draft" type="object" states="confirm" class="btn-primary" groups="mining_qaqc.qaqc_group_manager" />
+                        <button name="button_confirm" string="Confirm" type="object" states="draft" class="btn-primary" groups="mining_qaqc.qaqc_group_manager" />
+                        <button name="button_done" string="Adjust Inventory" type="object" states="confirm" class="btn-primary" groups="mining_qaqc.qaqc_group_manager"  />
+                        <button name="button_cancel" string="Cancel" type="object" groups="mining_qaqc.qaqc_group_manager"  />
+                        <!-- <button name="action_view_change_product_quantity" string="Update Qty" class="btn-primary" type="object" attrs="{'invisible': [ '|', ('product_id', '=', False ), ('state', '!=', 'draft' )]}" groups="mining_qaqc.qaqc_group_manager" /> -->
+                        <field name="state" widget="statusbar" statusbar_visible="draft,confirm,done"/>
+                    </header>
+                    <sheet>
+                        <div class="oe_button_box" name="button_box">
+                            <button name="toggle_active" type="object" class="oe_stat_button" icon="fa-archive">
+                                <field name="active" widget="boolean_button" options='{"terminology": "archive"}'/>
+                            </button>
+                            <button name="%(action_production_stock_inventory)d" type="action" string="Inventory" class="oe_stat_button" icon="fa-arrows-v" attrs="{'invisible': [('state', 'not in', ('confirm', 'done'))]}"/>
+                        </div>
+                        <div class="oe_title">
+                            <label for="name" class="oe_edit_only" string="Name" ></label>
+                            <h1>
+                                <field name="name" />
+                            </h1>
+                        </div>
+                        <group>
+                            <field name="date" />
+                            <field name="employee_id" />
+                            <field name="warehouse_id" />
+                            <field name="location_id" />
+                            <field name="block_id" />
+                            <field name="product_id" />
+                            <field name="lot_id" />
+                            <!-- <field name="curr_quantity" /> -->
+                            <field name="quantity" />
+                            <field name="user_id" invisible="1" />
+                        </group>
+                        <notebook>
+                            <page string="Elements Specifications"  >
+                                <field name="element_specs" >
+                                    <tree string="Elements Specifications" >
+                                        <field name="element_id" />
+                                        <field name="spec" />
+									</tree>
+                                </field >
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+    </record>
+</odoo>

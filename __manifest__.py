@@ -8,12 +8,16 @@
     'depends': [
         "stock",
         "barge",
+        "mining_production",
     ],
     'data': [
+        "views/production_stock_inventory.xml",
         'views/menu.xml',
         'views/qaqc_coa_order.xml',
         'views/partner.xml',
         "views/qaqc_chemical_element.xml",
+        "views/qaqc_assay_pile.xml",
+        "views/qaqc_element_spec.xml",
         
         'security/qaqc_security.xml',
         'security/ir.model.access.csv',

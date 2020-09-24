@@ -3,6 +3,6 @@
 from . import qaqc_coa
 from . import partner
 from . import qaqc_chemical_element
-# from . import pos_session
-# from . import pos_cashback_statement
-# from . import account_move
+from . import qaqc_assay_pile
+from . import stock_inventory
+from . import qaqc_element_spec

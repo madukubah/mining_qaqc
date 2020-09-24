@@ -11,6 +11,15 @@
             <field name="number_increment">1</field>
         </record>
 
+        <record id="sequence_qaqc_pile" model="ir.sequence">
+            <field name="name">qaqc_pile</field>
+            <field name="code">qaqc_pile</field>
+            <field name="prefix">QAQC/PILE/</field>
+            <field name="padding">4</field>
+            <field name="number_next">1</field>
+            <field name="number_increment">1</field>
+        </record>
+
         <record id="dp_qaqc" model="decimal.precision">
             <field name="name">QAQC</field>
             <field name="digits">3</field>

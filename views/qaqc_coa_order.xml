@@ -50,6 +50,7 @@
                                 <field name="rit" />
                                 <field name="ton_p_rit" />
                                 <field name="surveyor_id" />
+                                <field name="user_id" invisible="1" />
                             </group>
                         </group>
                         <group class="oe_title">
@@ -61,8 +62,6 @@
                                 <field name="final_date" />
                             </group>
                         </group>
-
-
                         <notebook>
                             <page string="Elements Specifications"  >
                                 <field name="element_specs" >
@@ -73,26 +72,10 @@
                                 </field >
                             </page>
                         </notebook>
-                        
                     </sheet>
                 </form>
             </field>
     </record>
 
-    <record id="view_qaqc_element_spec_form" model="ir.ui.view">
-            <field name="name">qaqc.element.spec.form</field>
-            <field name="model">qaqc.element.spec</field>
-            <field name="priority">1</field>
-            <field name="arch" type="xml">
-                <form string="Log">
-                    <sheet>
-                        <group>
-                            <field name="coa_order_id" invisible="1"/>
-                            <field name="element_id" />
-                            <field name="spec" />
-                        </group>
-                    </sheet>
-                </form>
-            </field>
-    </record>
+    
 </odoo>
