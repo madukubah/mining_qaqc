@@ -32,7 +32,7 @@ class QaqcAssayPile(models.Model):
 			required=True, 
 			states=READONLY_STATES,
             ondelete="restrict" )
-	block_id = fields.Many2one('production.block', string='Block', ondelete="restrict", states=READONLY_STATES )
+	# block_id = fields.Many2one('production.block', string='Block', ondelete="restrict", states=READONLY_STATES )
 	product_id = fields.Many2one('product.product', 'Material', required=True, states=READONLY_STATES )
 	lot_id = fields.Many2one(
         'stock.production.lot', 'Lot',
@@ -45,6 +45,7 @@ class QaqcAssayPile(models.Model):
         'qaqc.element.spec',
         'assay_pile_id',
         string='Elements Specifications',
+		copy=True,
         states=READONLY_STATES )
 	state = fields.Selection([
         ('draft', 'Draft'), 
@@ -117,7 +118,6 @@ class QaqcAssayPile(models.Model):
 	@api.multi
 	def _prepare_inventory_lines(self):
 		line_ids = []
-		no_lot_product = self.product_id.with_context(location=self.location_id.id, lot_id=None )
 		product = self.product_id.with_context(location=self.location_id.id, lot_id=self.lot_id.id)
 		th_qty = product.qty_available
 
@@ -139,6 +139,12 @@ class QaqcAssayPile(models.Model):
 		""" Changes the Product Quantity by making a Physical Inventory. """
 		Inventory = self.env['stock.inventory']
 		InventoryLine = self.env['stock.inventory.line']
+		ProductionConfig = self.env['mining.production.config'].sudo()
+
+		production_config = ProductionConfig.search([ ( "active", "=", True ) ]) 
+		if not production_config :
+			raise UserError(_('Please Set Default Lot In Configuration file Mining Production') )
+
 		for record in self:
 			# product = record.product_id.with_context(location=record.location_id.id, lot_id=record.lot_id.id)
 			# line_ids = []
@@ -152,9 +158,9 @@ class QaqcAssayPile(models.Model):
 			inventory.onchange_filter()
 			inventory.prepare_inventory()
 			for line in inventory.line_ids:
-				if not line.prod_lot_id :
+				if line.prod_lot_id.id == production_config[0].lot_id.id :
 					line.product_qty = line.theoretical_qty - record.quantity if ( line.theoretical_qty - record.quantity ) >= 0 else 0
-				if line.prod_lot_id :
+				else :
 					line.unlink()
 
 			product = record.product_id.with_context(location=record.location_id.id, lot_id=record.lot_id.id)
