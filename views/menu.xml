@@ -10,7 +10,7 @@
     </record>
 
     <record model="ir.actions.act_window" id="action_chemical_element">
-        <field name="name">Elements</field>
+        <field name="name">Ore Specification</field>
         <field name="res_model">qaqc.chemical.element</field>
         <field name="view_type">form</field>
         <field name="view_mode">tree,form</field>

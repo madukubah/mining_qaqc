@@ -7,7 +7,7 @@
         <field name="type">tree</field>
         <field name="priority" eval="8"/>
         <field name="arch" type="xml">
-            <tree string="Element List">
+            <tree string="Ore Specification List">
                 <field name="name" />
                 <field name="code" />
             </tree>
@@ -19,7 +19,7 @@
             <field name="model">qaqc.chemical.element</field>
             <field name="priority">1</field>
             <field name="arch" type="xml">
-                <form string="Element">
+                <form string="Ore Specification">
                     <sheet>
                         <div class="oe_title">
                             <label for="name" class="oe_edit_only" string="Element Name" ></label>
