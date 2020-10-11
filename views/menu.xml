@@ -44,9 +44,9 @@
                 sequence= "1"
                 />
 
-        <menuitem name="Assay Result Pile"
+        <menuitem name="Assay Result Stockyard"
                 id="qaqc_assay_pile"
-                parent="qaqc_sub" 
+                parent="qaqc_sub"
                 action="action_qaqc_assay_pile"
                 sequence= "2"
                 />
@@ -61,7 +61,7 @@
     <menuitem id="qaqc_config" name="Configuration" sequence="3" 
 			parent="qaqc_top"/>
     
-        <menuitem name="Mining Elements"
+        <menuitem name="Ore Specification"
                 id="qaqc_chemical_element"
                 parent="qaqc_config" 
                 action="action_chemical_element"
