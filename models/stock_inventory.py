@@ -11,4 +11,4 @@ class Inventory(models.Model):
     _inherit = "stock.inventory"
     
     assay_pile_id = fields.Many2one("qaqc.assay.pile",
-        'Assay Pile', ondelete='set null', index=True, readonly=True)
+        'Assay Pile', ondelete='set null', index=True, readonly=True )

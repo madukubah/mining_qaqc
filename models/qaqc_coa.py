@@ -9,20 +9,22 @@ _logger = logging.getLogger( __name__ )
 
 class QaqcCoa(models.Model):
 	_name = "qaqc.coa.order"
+	_inherit = ['mail.thread', 'ir.needaction_mixin']
 	_order = "id desc"
 
 	@api.multi
 	def _check_quantity(self):
-		for rec in self:
-			product_qty = rec.product_id.with_context({'location' : rec.location_id.id})
-			if ( rec.quantity > product_qty.qty_available ) :
+		for order in self:
+			product_qty = order.product_id.with_context({'location' : order.location_id.id})
+			if ( order.quantity > product_qty.qty_available ) :
 				raise UserError(_("Actual Quantity Cannot Bigger Than Qty on Location ( Qty on Location is %s )" % product_qty.qty_available ) )
 				
 
 	READONLY_STATES = {
-        'final': [('readonly', True)],
         'draft': [('readonly', False)],
+        'confirm': [('readonly', True)],
         'done': [('readonly', True)],
+        'cancel': [('readonly', True)],
     }
 	name = fields.Char(string="Name", size=100 , required=True, states=READONLY_STATES )
 	date = fields.Date('Report Date', help='',  default=time.strftime("%Y-%m-%d"), states=READONLY_STATES  )
@@ -42,17 +44,17 @@ class QaqcCoa(models.Model):
 			store=True,copy=True,
 			compute="_onchange_barge_id",
             ondelete="restrict" )
-	product_id = fields.Many2one('product.product', 'Material', required=True, states=READONLY_STATES )
+	product_id = fields.Many2one('product.product', 'Material', domain=[('type', 'in', ['product', 'consu'])], required=True, states=READONLY_STATES )
 	product_uom = fields.Many2one(
             'product.uom', 'Product Unit of Measure', 
             required=True,
 			domain=[ ('category_id.name','=',"Mining")  ],
             default=lambda self: self._context.get('product_uom', False), states=READONLY_STATES)
 	quantity = fields.Float( string="Actual Quantity (WMT)", default=0, digits=dp.get_precision('QAQC'), states=READONLY_STATES, store=True )
-	curr_quantity = fields.Float( string="Qurrent Quantity (WMT)", default=0, digits=dp.get_precision('QAQC'), readonly=True, compute="_compute_curr_quantity" )
+	curr_quantity = fields.Float( string="Current Quantity (WMT)", store=True, default=0, digits=dp.get_precision('QAQC'), readonly=True, compute="_compute_curr_quantity" )
 
-	rit = fields.Float( string="Rit", default=0, digits=0, states=READONLY_STATES )
-	ton_p_rit = fields.Float( string="Ton/Rit", default=0, digits=0, states=READONLY_STATES )
+	rit = fields.Float( string="Rit", default=0, digits=0, states=READONLY_STATES, compute="_compute_ton_p_rit" )
+	ton_p_rit = fields.Float( string="Ton/Rit", default=0, digits=0, states=READONLY_STATES, compute="_compute_ton_p_rit" )
 	surveyor_id	= fields.Many2one('res.partner', string='Surveyor', required=True, domain=[ ('is_surveyor','=',True)], states=READONLY_STATES )
 	element_specs = fields.One2many(
         'qaqc.element.spec',
@@ -61,28 +63,43 @@ class QaqcCoa(models.Model):
         copy=True, states=READONLY_STATES )
 	state = fields.Selection([
         ('draft', 'Draft'), 
-		('final', 'Final'),
+		('cancel', 'Cancelled'),
+		('confirm', 'Final'),
 		('done', 'Done'),
         ], string='Status', readonly=True, copy=False, index=True, track_visibility='onchange', default='draft')
 	user_id = fields.Many2one('res.users', string='User', index=True, track_visibility='onchange', default=lambda self: self.env.user)
 
+	@api.multi
+	def action_confirm(self):
+		for order in self:
+			order._check_quantity()
+			order.state = 'confirm'
 
 	@api.multi
-	def button_final(self):
-		self._check_quantity()
-		self.state = 'final'
+	def action_done(self):
+		for order in self:
+			if order.state == 'done' :
+				continue
+			if order.state != 'confirm':
+				raise UserError(_("Please Set Assay Result Barge To Final First") )
+			order.state = 'done'
 
 	@api.multi
-	def button_done(self):
-		if self.state == 'done' :
-			return
-		if self.state != 'final':
-			raise UserError(_("Please Set Assay Result Barge To Final First") )
-		self.state = 'done'
+	def action_draft(self):
+		for order in self:
+			order.state = 'draft'
 
 	@api.multi
-	def button_draft(self):
-		self.state = 'draft'
+	def action_cancel(self):
+		for order in self:
+			if order.state == 'done':
+				raise UserError(_('Unable to cancel order %s as some receptions have already been done.') % (order.name))
+			order.state = 'cancel'
+
+	@api.multi
+	def action_reload(self):
+		for order in self:
+			order._compute_curr_quantity( )
 
 	@api.model
 	def create(self, values):
@@ -93,48 +110,50 @@ class QaqcCoa(models.Model):
 
 	@api.depends("barge_id" )
 	def _onchange_barge_id(self):
-		for rec in self:
-			if( rec.barge_id ):
-				rec.location_id = rec.barge_id.location_id
-				rec.warehouse_id = rec.barge_id.warehouse_id
+		for order in self:
+			if( order.barge_id ):
+				order.location_id = order.barge_id.location_id
+				order.warehouse_id = order.barge_id.warehouse_id
 				
 
 	@api.onchange("location_id" )
 	def _set_name(self):
-		for rec in self:
-			if( rec.location_id ):
-				rec.name = rec.location_id.name
+		for order in self:
+			if( order.location_id ):
+				order.name = order.location_id.name
 				
-				if rec.surveyor_id :
-					rec.name = rec.name + "/" + rec.surveyor_id.surveyor.upper()
+				if order.surveyor_id :
+					order.name = order.name + "/" + order.surveyor_id.surveyor.upper()
 				
 	@api.depends("location_id", "product_id" )
 	def _compute_curr_quantity(self):
-		for rec in self:
-			if( rec.location_id and rec.product_id ):
-				product_qty = rec.product_id.with_context({'location' : rec.location_id.id})
-				rec.curr_quantity = product_qty.qty_available
+		for order in self:
+			if( order.location_id and order.product_id ):
+				product_qty = order.product_id.with_context({'location' : order.location_id.id})
+				order.curr_quantity = product_qty.qty_available
 	
-	@api.onchange("product_uom", "curr_quantity")
+	@api.depends("product_uom", "curr_quantity")
 	def _compute_ton_p_rit(self):
-		for rec in self:
-			if( rec.product_uom ):
-				rec.rit = rec.product_id.uom_id._compute_quantity( rec.curr_quantity , rec.product_uom ) 
-				rec.rit = rec.rit if rec.rit else 1
-				rec.ton_p_rit = rec.curr_quantity / rec.rit
+		for order in self:
+			if( order.product_uom ):
+				order.rit = order.product_id.uom_id._compute_quantity( order.curr_quantity , order.product_uom ) 
+				order.ton_p_rit = order.curr_quantity / ( order.rit if order.rit else 1 )
 				
 
 	@api.onchange("surveyor_id" )
 	def _surveyor_change(self):
-		for rec in self:
-			if( rec.location_id and rec.surveyor_id ):
-				rec.name = rec.location_id.name
-				rec.name = rec.name + "/" + rec.surveyor_id.surveyor.upper()
+		for order in self:
+			if( order.location_id and order.surveyor_id ):
+				order.name = order.location_id.name
+				order.name = order.name + "/" + order.surveyor_id.surveyor.upper()
 
 	@api.multi
 	def action_view_change_product_quantity(self):
 		if( self.state != "draft" ):
 			raise UserError(_('Only Change Product Qty in Draft State') )
+
+		if( self.product_id.type not in ['product', 'consu'] ) :
+			raise UserError(_('Stockable product Only') )
 
 
 		return {    
@@ -155,8 +174,8 @@ class QaqcCoa(models.Model):
 
 	@api.multi
 	def unlink(self):
-		for rec in self:
-			if rec.state != "draft" :
+		for order in self:
+			if order.state != "draft" :
 				raise UserError(_("Only Delete data in Draft State") )
 		
 		return super(QaqcCoa, self ).unlink()

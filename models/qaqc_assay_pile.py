@@ -3,11 +3,13 @@ from odoo import api, fields, models, _
 from odoo.exceptions import UserError, ValidationError
 import time
 from odoo.addons import decimal_precision as dp
+
 import logging
 _logger = logging.getLogger(__name__)
 
 class QaqcAssayPile(models.Model):
 	_name = "qaqc.assay.pile"
+	_inherit = ['mail.thread', 'ir.needaction_mixin']
 	_order = "id desc"
 
 	READONLY_STATES = {
@@ -33,7 +35,7 @@ class QaqcAssayPile(models.Model):
 			states=READONLY_STATES,
             ondelete="restrict" )
 	# block_id = fields.Many2one('production.block', string='Block', ondelete="restrict", states=READONLY_STATES )
-	product_id = fields.Many2one('product.product', 'Material', required=True, states=READONLY_STATES )
+	product_id = fields.Many2one('product.product', 'Material', domain=[('type', 'in', ['product', 'consu'])], required=True, states=READONLY_STATES )
 	lot_id = fields.Many2one(
         'stock.production.lot', 'Lot',
 		required=True, 
@@ -59,6 +61,15 @@ class QaqcAssayPile(models.Model):
         'Active', default=True,
         help="If unchecked, it will allow you to hide the rule without removing it.")
 
+	@api.onchange( 'warehouse_id' )	
+	def _change_wh(self):
+		for order in self:
+			return {
+				'domain':{
+					'location_id':[('location_id','=',order.warehouse_id.view_location_id.id )] ,
+					} 
+				}
+
 	@api.model
 	def create(self, values):
 		AssayPile = self.env['qaqc.assay.pile']
@@ -76,21 +87,23 @@ class QaqcAssayPile(models.Model):
 		return res
 
 	@api.multi
-	def button_confirm(self):
-		self._create_inv_adjust()
-		self.state = 'confirm'
+	def action_confirm(self):
+		for record in self:
+			if( record.product_id.type not in ['product', 'consu'] ) :
+				raise UserError(_('Stockable product Only') )
+			record._create_inv_adjust()
+			record.state = 'confirm'
 
 	@api.multi
-	def button_done(self):
+	def action_done(self):
 		for record in self:
 			for inventory in record.inventory_ids:
 				if inventory.state == 'confirm':
 					inventory.action_done()
 		
-		self.write({'state': 'done'})
+			record.write({'state': 'done'})
 
-	@api.multi
-	def button_draft(self):
+	def remove_inv_ids(self):
 		for record in self:
 			for inventory in record.inventory_ids:
 				if inventory.state == 'done':
@@ -100,27 +113,31 @@ class QaqcAssayPile(models.Model):
 				inventory.action_cancel_draft()
 				inventory.unlink()
 
-		self.write({'state': 'draft'})
+	@api.multi
+	def action_draft(self):
+		for record in self:
+			record.remove_inv_ids()
+			record.write({'state': 'draft'})
 
 	@api.multi
-	def button_cancel(self):
+	def action_cancel(self):
 		for record in self:
-			for inventory in record.inventory_ids:
-				if inventory.state == 'done':
-					raise UserError(_('Unable to cancel record %s as some receptions have already been done.') % (record.name))
+			record.remove_inv_ids()
+			record.write({'state': 'cancel'})
 
-			for inventory in record.inventory_ids.filtered(lambda r: r.state != 'cancel'):
-				inventory.action_cancel_draft()
-				inventory.unlink()
+	@api.multi
+	def unlink(self):
+		for record in self:
+			record.remove_inv_ids()
+		return super(QaqcAssayPile, self ).unlink()
 
-		self.write({'state': 'cancel'})
-
+	# suspend
+	# TODO implement it when _create_inv_adjust call
 	@api.multi
 	def _prepare_inventory_lines(self):
 		line_ids = []
 		product = self.product_id.with_context(location=self.location_id.id, lot_id=self.lot_id.id)
 		th_qty = product.qty_available
-
 		line_ids.append( (0, 0, 
 			{
 				'product_qty': self.quantity,
@@ -131,7 +148,6 @@ class QaqcAssayPile(models.Model):
 				'prod_lot_id': self.lot_id.id,
 			}
 		) )
-
 		return line_ids
 		
 	@api.multi
@@ -139,7 +155,7 @@ class QaqcAssayPile(models.Model):
 		""" Changes the Product Quantity by making a Physical Inventory. """
 		Inventory = self.env['stock.inventory']
 		InventoryLine = self.env['stock.inventory.line']
-		ProductionConfig = self.env['mining.production.config'].sudo()
+		ProductionConfig = self.env['production.config'].sudo()
 
 		production_config = ProductionConfig.search([ ( "active", "=", True ) ]) 
 		if not production_config :
@@ -149,7 +165,7 @@ class QaqcAssayPile(models.Model):
 			# product = record.product_id.with_context(location=record.location_id.id, lot_id=record.lot_id.id)
 			# line_ids = []
 			inventory = Inventory.create({
-				'name': _('INV: Assay/1/%s') % (record.product_id.name),
+				'name': _('INV: %s/%s') % (record.name, record.product_id.name),
 				'filter': 'product',
 				'assay_pile_id': record.id,
 				'product_id': record.product_id.id,
@@ -160,6 +176,8 @@ class QaqcAssayPile(models.Model):
 			for line in inventory.line_ids:
 				if line.prod_lot_id.id == production_config[0].lot_id.id :
 					line.product_qty = line.theoretical_qty - record.quantity if ( line.theoretical_qty - record.quantity ) >= 0 else 0
+					if line.prod_lot_id.id == record.lot_id.id :
+						line.unlink()
 				else :
 					line.unlink()
 
