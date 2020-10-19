@@ -155,7 +155,6 @@ class QaqcCoa(models.Model):
 		if( self.product_id.type not in ['product', 'consu'] ) :
 			raise UserError(_('Stockable product Only') )
 
-
 		return {    
 			'name': _("Update Qty On Hand"),
 			'type': 'ir.actions.act_window',
