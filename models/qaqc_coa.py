@@ -15,6 +15,7 @@ class QaqcCoa(models.Model):
 	@api.multi
 	def _check_quantity(self):
 		for order in self:
+			order._compute_curr_quantity()
 			product_qty = order.product_id.with_context({'location' : order.location_id.id})
 			if ( order.quantity > product_qty.qty_available ) :
 				raise UserError(_("Actual Quantity Cannot Bigger Than Qty on Location ( Qty on Location is %s )" % product_qty.qty_available ) )

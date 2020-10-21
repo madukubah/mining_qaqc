@@ -4,10 +4,11 @@
     'name': 'Quality Assurance & Quality Check',
     'version': '1.0',
     'author': 'Technoindo.com',
-    'category': 'Sales Management',
+    'category': 'Mining Quality Assurance',
     'depends': [
         "stock",
         "barge",
+        "mining_qaqc_chemical_element",
         "mining_production",
     ],
     'data': [
@@ -15,7 +16,6 @@
         'views/menu.xml',
         'views/qaqc_coa_order.xml',
         'views/partner.xml',
-        "views/qaqc_chemical_element.xml",
         "views/qaqc_assay_pile.xml",
         "views/qaqc_element_spec.xml",
         
