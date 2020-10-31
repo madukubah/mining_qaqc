@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="qaqc_assay_pile_report_form_view" model="ir.ui.view">
+            <field name="name">sr.qaqc.assay.pile.report.form.view</field>
+            <field name="model">qaqc.assay.pile.report</field>
+            <field name="arch" type="xml">
+                <form string="Assay Result Pile">
+                    <group>
+                            <field name="element_ids" widget="many2many_tags" options="{'no_create_edit': True}" />
+                    </group>
+
+                    <footer>
+                        <button name="action_print" string="Print Report" class="oe_highlight"
+                                type="object"/>
+                        Or
+                        <button string="Cancel" class="btn-default" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <record id="action_qaqc_assay_pile_report_wizard" model="ir.actions.act_window">
+            <field name="name">Assay Result Pile</field>
+            <field name="res_model">qaqc.assay.pile.report</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>
+
+        <menuitem id="menu_qaqc_assay_pile_report_wizard"
+                  name="Assay Result Pile"
+                  action="action_qaqc_assay_pile_report_wizard"
+                  parent="qaqc_report"
+                  sequence="2"/>
+    </data>
+</odoo>

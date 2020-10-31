@@ -18,6 +18,14 @@
         'views/partner.xml',
         "views/qaqc_assay_pile.xml",
         "views/qaqc_element_spec.xml",
+
+        "wizard/qaqc_coa_order_report.xml",
+        "wizard/qaqc_assay_pile_report.xml",
+
+        "report/qaqc_coa_order_report.xml",
+        "report/qaqc_coa_order_temp.xml",
+        "report/qaqc_assay_pile_report.xml",
+        "report/qaqc_assay_pile_temp.xml",
         
         'security/qaqc_security.xml',
         'security/ir.model.access.csv',

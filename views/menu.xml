@@ -59,7 +59,11 @@
             action="action_surveyor"
             />
     
-    <menuitem id="qaqc_config" name="Configuration" sequence="3" 
+
+    <menuitem id="qaqc_report" name="Report" sequence="98" 
+            parent="qaqc_top"/>
+
+    <menuitem id="qaqc_config" name="Configuration" sequence="99" 
 			parent="qaqc_top"/>
     
         <menuitem name="Ore Specification"

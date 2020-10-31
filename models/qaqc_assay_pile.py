@@ -42,7 +42,8 @@ class QaqcAssayPile(models.Model):
 		states=READONLY_STATES,
         domain="[('product_id', '=', product_id)]")
 	quantity = fields.Float( string="Actual Quantity (WMT)", required=True, default=0, digits=dp.get_precision('QAQC'), states=READONLY_STATES, store=True )
-	# curr_quantity = fields.Float( string="Qurrent Quantity (WMT)", default=0, digits=dp.get_precision('QAQC'), readonly=True, compute="_compute_curr_quantity" )
+	curr_quantity = fields.Float( string="Current Quantity (WMT)", store=True, default=0, digits=dp.get_precision('QAQC'), readonly=True, compute="_compute_curr_quantity" )
+	
 	element_specs = fields.One2many(
         'qaqc.element.spec',
         'assay_pile_id',
@@ -69,6 +70,14 @@ class QaqcAssayPile(models.Model):
 					'location_id':[('location_id','=',order.warehouse_id.view_location_id.id )] ,
 					} 
 				}
+			
+	@api.depends("location_id", "product_id" )
+	def _compute_curr_quantity(self):
+		for order in self:
+			if( order.location_id and order.product_id ):
+				product_qty = order.product_id.with_context({'location' : order.location_id.id, 'lot_id' : order.lot_id.id })
+				order.curr_quantity = product_qty.qty_available
+				order.quantity = order.curr_quantity
 
 	@api.model
 	def create(self, values):
@@ -103,15 +112,10 @@ class QaqcAssayPile(models.Model):
 		
 			record.write({'state': 'done'})
 
-	def remove_inv_ids(self):
-		for record in self:
-			for inventory in record.inventory_ids:
-				if inventory.state == 'done':
-					raise UserError(_('Unable to cancel record %s as some receptions have already been done.') % (record.name))
-
-			for inventory in record.inventory_ids.filtered(lambda r: r.state != 'cancel'):
-				inventory.action_cancel_draft()
-				inventory.unlink()
+	@api.multi
+	def action_reload(self):
+		for order in self:
+			order._compute_curr_quantity( )
 
 	@api.multi
 	def action_draft(self):
@@ -130,6 +134,16 @@ class QaqcAssayPile(models.Model):
 		for record in self:
 			record.remove_inv_ids()
 		return super(QaqcAssayPile, self ).unlink()
+
+	def remove_inv_ids(self):
+		for record in self:
+			for inventory in record.inventory_ids:
+				if inventory.state == 'done':
+					raise UserError(_('Unable to cancel record %s as some receptions have already been done.') % (record.name))
+
+			for inventory in record.inventory_ids.filtered(lambda r: r.state != 'cancel'):
+				inventory.action_cancel_draft()
+				inventory.unlink()
 
 	# suspend
 	# TODO implement it when _create_inv_adjust call

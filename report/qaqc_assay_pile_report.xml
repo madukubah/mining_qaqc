@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="paperformat_qaqc_assay_pile_landscape" model="report.paperformat">
+            <field name="name">Assay Result Barge Report Paperformat</field>
+            <field name="default" eval="True"/>
+            <field name="format">A4</field>
+            <field name="page_height">0</field>
+            <field name="page_width">0</field>
+            <field name="orientation">Landscape</field>
+            <field name="padding_top">100</field>
+            <field name="margin_top">10</field>
+            <field name="margin_bottom">15</field>
+            <field name="margin_left">7</field>
+            <field name="margin_right">7</field>
+            <field name="header_line" eval="False"/>
+            <field name="header_spacing">3</field>
+            <field name="dpi">90</field>
+        </record>
+
+        <!-- <record id="report_qaqc_assay_pile_landscape" model="ir.actions.report.xml">
+            <field name="paperformat_id" ref="paperformat_qaqc_assay_pile_landscape" />
+            <field name="name">Assay Result Barge Report </field>
+            <field name="report_name">Assay Result Barge Report </field>
+            <field name="model">qaqc.coa.order.report </field>
+        </record> -->
+        <report
+                id="action_qaqc_assay_pile_report_wise"
+                string="Assay Result Pile Report"
+                model="qaqc.assay.pile.report"
+                report_type="qweb-pdf"
+                file="mining_qaqc.qaqc_assay_pile_temp"
+                name="mining_qaqc.qaqc_assay_pile_temp"
+        />
+        <!-- paperformat="paperformat_qaqc_assay_pile_landscape" -->
+    </data>
+</odoo>

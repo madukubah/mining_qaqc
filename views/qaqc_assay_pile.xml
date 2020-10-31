@@ -27,6 +27,7 @@
                 <form string="Assay Result Pile">
                     <header>
                         <button name="action_draft" string="Set to Draft" type="object" states="confirm" class="btn-primary" groups="mining_qaqc.qaqc_group_manager" />
+                        <button name="action_reload" string="Reload" type="object" class="btn-primary" attrs="{'invisible': [('state', 'in', ('done', 'confirm', 'cancel'))]}" groups="mining_qaqc.qaqc_group_manager" />
                         <button name="action_confirm" string="Confirm" type="object" states="draft" class="btn-primary" groups="mining_qaqc.qaqc_group_manager" />
                         <button name="action_done" string="Adjust Inventory" type="object" states="confirm" class="btn-primary" groups="mining_qaqc.qaqc_group_manager"  />
                         <button name="action_cancel" string="Cancel" type="object" groups="mining_qaqc.qaqc_group_manager" attrs="{'invisible': [ ('state', 'in', ('done', 'cancel') )]}" />
@@ -54,7 +55,7 @@
                             <!-- <field name="block_id" /> -->
                             <field name="product_id" />
                             <field name="lot_id" />
-                            <!-- <field name="curr_quantity" /> -->
+                            <field name="curr_quantity" />
                             <field name="quantity" />
                             <field name="user_id" invisible="1" />
                         </group>

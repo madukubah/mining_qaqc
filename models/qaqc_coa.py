@@ -69,6 +69,9 @@ class QaqcCoa(models.Model):
 		('done', 'Done'),
         ], string='Status', readonly=True, copy=False, index=True, track_visibility='onchange', default='draft')
 	user_id = fields.Many2one('res.users', string='User', index=True, track_visibility='onchange', default=lambda self: self.env.user)
+	active = fields.Boolean(
+        'Active', default=True,
+        help="If unchecked, it will allow you to hide the rule without removing it.")
 
 	@api.multi
 	def action_confirm(self):
@@ -104,6 +107,15 @@ class QaqcCoa(models.Model):
 
 	@api.model
 	def create(self, values):
+		CoaOrder = self.env['qaqc.coa.order']
+		coa_orders = CoaOrder.search([ ( "location_id", "=", values["location_id"] ), ( "surveyor_id", "=", values["surveyor_id"] ), ( "product_id", "=", values["product_id"] ), ( "active", "=", True ) ])
+		for coa_order in coa_orders:
+			if coa_order.state == "cancel" :
+				continue
+			if coa_order.state != "done" :
+					raise UserError(_('Cannot create this file because there is similar file with same location, material and surveyor ( %s ).') % (coa_order.name))
+			coa_order.write({'active': False})
+
 		seq = self.env['ir.sequence'].next_by_code('qaqc_barge')
 		values["name"] = seq + "/" + values["name"]
 		res = super(QaqcCoa, self ).create(values)
