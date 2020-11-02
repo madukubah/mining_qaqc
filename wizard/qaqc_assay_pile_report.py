@@ -13,7 +13,7 @@ class QaqcAssayPileReport(models.TransientModel):
         chemical_elements = self.env['qaqc.chemical.element'].sudo().search([ ] )
         return chemical_elements.ids 
 
-    element_ids = fields.Many2many('qaqc.chemical.element', 'qaqc_coa_element_rel', 'qaqc_coa_id', 'element_id', 'Element To Show', default=_default_elements )
+    element_ids = fields.Many2many('qaqc.chemical.element', 'qaqc_assay_pile_element_rel', 'qaqc_assay_pile_id', 'element_id', 'Element To Show', default=_default_elements )
 
     @api.multi
     def action_print(self):       
