@@ -18,8 +18,7 @@ class QaqcCoa(models.Model):
 			order._compute_curr_quantity()
 			product_qty = order.product_id.with_context({'location' : order.location_id.id})
 			if ( order.quantity > product_qty.qty_available ) :
-				raise UserError(_("Actual Quantity Cannot Bigger Than Qty on Location ( Qty on Location is %s )" % product_qty.qty_available ) )
-				
+				raise UserError(_("Actual Quantity Cannot Bigger Than Qty on Location ( Qty on Location is %s )" % product_qty.qty_available ) )	
 
 	READONLY_STATES = {
         'draft': [('readonly', False)],
@@ -35,13 +34,13 @@ class QaqcCoa(models.Model):
 
 	warehouse_id = fields.Many2one(
             'stock.warehouse', 'Origin Warehouse',
-			readonly=True,
+			# readonly=True,
 			store=True,copy=True,
 			compute="_onchange_barge_id",
             ondelete="restrict" )
 	location_id = fields.Many2one(
             'stock.location', 'Location',
-			readonly=True,
+			# readonly=True,
 			store=True,copy=True,
 			compute="_onchange_barge_id",
             ondelete="restrict" )
@@ -73,6 +72,7 @@ class QaqcCoa(models.Model):
         'Active', default=True,
         help="If unchecked, it will allow you to hide the rule without removing it.")
 
+	
 	@api.multi
 	def action_confirm(self):
 		for order in self:
@@ -108,7 +108,10 @@ class QaqcCoa(models.Model):
 	@api.model
 	def create(self, values):
 		CoaOrder = self.env['qaqc.coa.order']
-		coa_orders = CoaOrder.search([ ( "location_id", "=", values["location_id"] ), ( "surveyor_id", "=", values["surveyor_id"] ), ( "product_id", "=", values["product_id"] ), ( "active", "=", True ) ])
+		barge = self.env['shipping.barge'].search([ ( "id", "=", values["barge_id"] ) ])
+		coa_orders = []
+		# if values.get("location_id", False) :
+		coa_orders = CoaOrder.search([ ( "location_id", "=", barge.location_id.id ), ( "surveyor_id", "=", values["surveyor_id"] ), ( "product_id", "=", values["product_id"] ), ( "active", "=", True ) ])
 		for coa_order in coa_orders:
 			if coa_order.state == "cancel" :
 				continue
