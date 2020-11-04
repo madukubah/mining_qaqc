@@ -5,7 +5,7 @@
             <field name="name">sr.qaqc.assay.pile.report.form.view</field>
             <field name="model">qaqc.assay.pile.report</field>
             <field name="arch" type="xml">
-                <form string="Assay Result Pile">
+                <form string="Assay Result Stockyard">
                     <group>
                             <field name="element_ids" widget="many2many_tags" options="{'no_create_edit': True}" />
                     </group>
@@ -21,7 +21,7 @@
         </record>
 
         <record id="action_qaqc_assay_pile_report_wizard" model="ir.actions.act_window">
-            <field name="name">Assay Result Pile</field>
+            <field name="name">Assay Result Stockyard</field>
             <field name="res_model">qaqc.assay.pile.report</field>
             <field name="view_type">form</field>
             <field name="view_mode">form</field>
@@ -29,7 +29,7 @@
         </record>
 
         <menuitem id="menu_qaqc_assay_pile_report_wizard"
-                  name="Assay Result Pile"
+                  name="Assay Result Stockyard"
                   action="action_qaqc_assay_pile_report_wizard"
                   parent="qaqc_report"
                   sequence="2"/>

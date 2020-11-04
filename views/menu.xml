@@ -10,7 +10,7 @@
     </record>
 
     <record model="ir.actions.act_window" id="action_qaqc_assay_pile">
-        <field name="name">Assay Result Pile</field>
+        <field name="name">Assay Result Stockyard</field>
         <field name="res_model">qaqc.assay.pile</field>
         <field name="view_type">form</field>
         <field name="view_mode">tree,form</field>
