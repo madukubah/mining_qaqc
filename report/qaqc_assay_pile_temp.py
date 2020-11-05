@@ -21,6 +21,7 @@
 
 import logging
 from odoo import api, fields, models
+import datetime
 
 _logger = logging.getLogger(__name__)
 
@@ -35,6 +36,8 @@ class ReportMining_qaqc_qaqc_assay_pile_Temp(models.AbstractModel):
             'doc_model': data.get('model'),
             'data': data['form'],
             'element_names': data['element_names'],
+            'date': datetime.datetime.now().strftime("%d/%m/%Y"),
+
         }
         # print "===================docargs",docargs
         # _logger.warning( docargs )

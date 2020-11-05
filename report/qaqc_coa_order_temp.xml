@@ -11,6 +11,11 @@
                                     <h4>Assay Result Barge Report</h4>
                                 </b>
                             </center>
+                            <center>
+                                <b>
+                                    <span t-esc="date"/>
+                                </b>
+                            </center>
                         </div>
                         <br/>
                         <!-- <t t-foreach="n" t-as="nn"> -->
