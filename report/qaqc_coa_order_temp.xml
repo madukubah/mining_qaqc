@@ -31,7 +31,7 @@
                                         <!-- <th class="text-center">Name</th> -->
                                         <!-- <th class="text-center">Location</th> -->
                                         <th class="text-center">Surveyor</th>
-                                        <th class="text-center">Quantity</th>
+                                        <th class="text-center">Quantity (WMT)</th>
                                         <!-- <th class="text-center">Status</th> -->
                                         <t t-foreach="element_names" t-as="element_name">
                                             <th class="text-center" t-esc="element_name" ></th>
