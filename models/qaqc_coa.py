@@ -27,7 +27,7 @@ class QaqcCoa(models.Model):
         'cancel': [('readonly', True)],
     }
 	name = fields.Char(string="Name", size=100 , required=True, states=READONLY_STATES )
-	date = fields.Date('Report Date', help='',  default=time.strftime("%Y-%m-%d"), states=READONLY_STATES  )
+	date = fields.Date('Report Date', help='',  default=fields.Datetime.now , states=READONLY_STATES  )
 	initial_date = fields.Date('Date of Initial', help='', required=True, states=READONLY_STATES  )
 	final_date = fields.Date('Date of Final', help='', required=True, states=READONLY_STATES  )
 	barge_id = fields.Many2one('shipping.barge', string='Barge', states=READONLY_STATES, domain=[ ('active','=',True)], required=True, change_default=True, index=True, track_visibility='always')

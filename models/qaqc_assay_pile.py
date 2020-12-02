@@ -19,7 +19,7 @@ class QaqcAssayPile(models.Model):
         'done': [('readonly', True)],
     }
 	name = fields.Char(string="Name", size=100 , required=True, readonly=True, default="NEW")
-	date = fields.Date('Report Date', help='',  default=time.strftime("%Y-%m-%d"), states=READONLY_STATES  )
+	date = fields.Date('Report Date', help='',  default=fields.Datetime.now, states=READONLY_STATES  )
 
 	employee_id	= fields.Many2one('hr.employee', string='Responsible', required=True, states=READONLY_STATES )
 	warehouse_id = fields.Many2one(
