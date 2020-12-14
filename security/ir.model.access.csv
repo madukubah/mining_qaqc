@@ -12,8 +12,3 @@ stock_production_lot_acces_right_qaqc_manager,stock_production_lot_acces_right_q
 qaqc_coa_acces_right_user,qaqc_coa_acces_right_user,model_qaqc_coa_order,qaqc_group_user,1,1,1,0
 qaqc_assay_pile_acces_right_user,qaqc_assay_pile_acces_right_user,model_qaqc_assay_pile,qaqc_group_user,1,1,1,0
 element_spec_acces_right_user,element_spec_acces_right_user,model_qaqc_element_spec,qaqc_group_user,1,1,1,1
-,,,,,,,
-element_spec_acces_right_all,element_spec_acces_right_all,model_qaqc_element_spec,,1,0,0,0
-chemical_element_acces_right_all,chemical_element_acces_right_all,mining_qaqc_chemical_element.model_qaqc_chemical_element,,1,0,0,0
-qaqc_coa_acces_right_all,qaqc_coa_acces_right_all,model_qaqc_coa_order,,1,0,0,0
-qaqc_assay_pile_acces_right_all,qaqc_assay_pile_acces_right_all,model_qaqc_assay_pile,,1,0,0,0
