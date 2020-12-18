@@ -15,6 +15,8 @@ class QaqcCoa(models.Model):
 	@api.multi
 	def _check_quantity(self):
 		for order in self:
+			if order.surveyor_id.surveyor != "main" :
+				return
 			order._compute_curr_quantity()
 			product_qty = order.product_id.with_context({'location' : order.location_id.id})
 			if ( order.quantity > product_qty.qty_available ) :
@@ -56,6 +58,7 @@ class QaqcCoa(models.Model):
 	rit = fields.Float( string="Rit", default=0, digits=0, states=READONLY_STATES, compute="_compute_ton_p_rit" )
 	ton_p_rit = fields.Float( string="Ton/Rit", default=0, digits=0, states=READONLY_STATES, compute="_compute_ton_p_rit" )
 	surveyor_id	= fields.Many2one('res.partner', string='Surveyor', required=True, domain=[ ('is_surveyor','=',True)], states=READONLY_STATES )
+	main_surveyor	= fields.Boolean( string='Is Main Surveyor', default=False, compute="compute_main_surveyor", help="Technical field" )
 	element_specs = fields.One2many(
         'qaqc.element.spec',
         'coa_order_id',
@@ -73,6 +76,9 @@ class QaqcCoa(models.Model):
         help="If unchecked, it will allow you to hide the rule without removing it.")
 
 	
+	def compute_main_surveyor(self):
+		for order in self:
+			order.main_surveyor = order.surveyor_id.surveyor == "main"
 	@api.multi
 	def action_confirm(self):
 		for order in self:
@@ -139,7 +145,7 @@ class QaqcCoa(models.Model):
 				order.name = order.location_id.name
 				
 				if order.surveyor_id :
-					order.name = order.name + "/" + order.surveyor_id.surveyor.upper()
+					order.name = order.name + "/" + order.surveyor_id.code_name.upper()
 				
 	@api.depends("location_id", "product_id" )
 	def _compute_curr_quantity(self):
@@ -161,10 +167,12 @@ class QaqcCoa(models.Model):
 		for order in self:
 			if( order.location_id and order.surveyor_id ):
 				order.name = order.location_id.name
-				order.name = order.name + "/" + order.surveyor_id.surveyor.upper()
+				order.name = order.name + "/" + order.surveyor_id.code_name.upper()
 
 	@api.multi
 	def action_view_change_product_quantity(self):
+		if self.surveyor_id.surveyor != "main" :
+			raise UserError(_('Only Main Surveyor Can Change Product Qty') )
 		if( self.state != "draft" ):
 			raise UserError(_('Only Change Product Qty in Draft State') )
 

@@ -5,7 +5,10 @@ class Partner(models.Model):
     _inherit = "res.partner"
 
     is_surveyor	=  fields.Boolean(string="Is Surveyor", store=True, default=False )
+    code_name = fields.Char(string="Code Name", size=100 , default="-", store=True )
     surveyor = fields.Selection([
+        ('main', 'Main'), 
+        ('other', 'Others'), 
         ('intertek', 'Intertek'), 
 		('carsurin', 'Carsurin'),
 		('internal', 'Internal')

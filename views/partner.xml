@@ -11,6 +11,7 @@
 				<field name="website" position="after">
 					<field name="is_surveyor" />
 					<field name="surveyor" attrs="{'invisible': [ ('is_surveyor', '=', False) ] }" />
+					<field name="code_name" attrs="{'invisible': [ ('is_surveyor', '=', False) ] }" />
 				</field>
 			</field>
 		</record>
