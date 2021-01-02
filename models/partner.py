@@ -8,8 +8,5 @@ class Partner(models.Model):
     code_name = fields.Char(string="Code Name", size=100 , default="-", store=True )
     surveyor = fields.Selection([
         ('main', 'Main'), 
-        ('other', 'Others'), 
-        ('intertek', 'Intertek'), 
-		('carsurin', 'Carsurin'),
-		('internal', 'Internal')
+        ('other', 'Others'),
         ], string='Surveyor', copy=True, index=True, store=True )
