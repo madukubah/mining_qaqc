@@ -8,6 +8,8 @@
                 <form string="Assay Result Stockyard">
                     <group>
                             <field name="element_ids" widget="many2many_tags" options="{'no_create_edit': True}" />
+                            <field name="element_id" string="Specified element" />
+                            <field name="spec" />
                     </group>
 
                     <footer>

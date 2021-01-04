@@ -17,7 +17,7 @@ class QaqcCoaOrderReport(models.TransientModel):
 
     @api.multi
     def action_print(self):       
-        coa_orders = self.env['qaqc.coa.order'].search([ ( 'active', '=', True ), ( 'state', 'in', ['confirm', 'done' ] ) ])
+        coa_orders = self.env['qaqc.coa.order'].search([ ( 'active', '=', True ), ( 'state', 'in', ['confirm', 'done', 'draft' ] ) ])
         element_names = []
         for element_id in self.element_ids:
             element_names += [ element_id.name ]
