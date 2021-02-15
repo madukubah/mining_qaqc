@@ -30,9 +30,15 @@
         <field name="view_type">form</field>
         <field name="view_mode">tree,form</field>
     </record>
+
+    <record model="ir.actions.act_window" id="action_qaqc_density">
+        <field name="name">Densities</field>
+        <field name="res_model">qaqc.density</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+    </record>
   
 
-    
     <menuitem id="qaqc_top" name="QAQC" sequence="3" web_icon="mining_qaqc,static/description/icon.png" />
 
     <menuitem id="qaqc_sub" name="QAQC" sequence="1" 
@@ -75,6 +81,12 @@
                 id="qaqc_chemical_element"
                 parent="qaqc_config" 
                 action="action_chemical_element"
+                sequence= "1"
+                />
+        <menuitem name="Densities"
+                id="qaqc_density"
+                parent="qaqc_config" 
+                action="action_qaqc_density"
                 sequence= "1"
                 />
 
