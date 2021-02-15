@@ -9,7 +9,7 @@
         "stock",
         "barge",
         "mining_qaqc_chemical_element",
-        "mining_production",
+        # "mining_production",
     ],
     'data': [
         "views/production_stock_inventory.xml",
