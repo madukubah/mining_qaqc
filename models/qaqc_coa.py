@@ -75,10 +75,10 @@ class QaqcCoa(models.Model):
         'Active', default=True,
         help="If unchecked, it will allow you to hide the rule without removing it.")
 
-	
 	def compute_main_surveyor(self):
 		for order in self:
 			order.main_surveyor = order.surveyor_id.surveyor == "main"
+			
 	@api.multi
 	def action_confirm(self):
 		for order in self:

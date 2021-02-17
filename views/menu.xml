@@ -57,10 +57,23 @@
                 action="action_qaqc_assay_pile"
                 sequence= "2"
                 />
-    
+
+    <menuitem id="qaqc_production_lot" 
+            name="Lots/Serial Numbers" 
+            sequence="2" 
+			parent="qaqc_top"
+            action="stock.action_production_lot_form"
+            groups="qaqc_group_manager"
+            />
+    <menuitem name="Ritase"
+            id="qaqc_mining_ritase"
+            parent="qaqc_top"
+            action="mining_production.action_ritase_order"
+            sequence= "3"
+            />
     <menuitem id="qaqc_surveyor" 
             name="Surveyor" 
-            sequence="2" 
+            sequence="4" 
 			parent="qaqc_top"
             action="action_surveyor"
             groups="qaqc_group_manager"

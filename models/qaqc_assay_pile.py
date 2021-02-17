@@ -34,13 +34,18 @@ class QaqcAssayPile(models.Model):
 			required=True, 
 			states=READONLY_STATES,
             ondelete="restrict" )
-	# block_id = fields.Many2one('production.block', string='Block', ondelete="restrict", states=READONLY_STATES )
-	product_id = fields.Many2one('product.product', 'Material', domain=[('type', 'in', ['product', 'consu'])], required=True, states=READONLY_STATES )
 	lot_id = fields.Many2one(
         'stock.production.lot', 'Lot',
 		required=True, 
 		states=READONLY_STATES,
-        domain="[('product_id', '=', product_id)]")
+		)
+	product_id = fields.Many2one(
+		'product.product', 
+		'Material', 
+		domain=[('type', 'in', ['product', 'consu']) ], 
+		required=True, 
+		states=READONLY_STATES
+		)
 	quantity = fields.Float( string="Actual Quantity (WMT)", required=True, default=0, digits=dp.get_precision('QAQC'), states=READONLY_STATES, store=True )
 	curr_quantity = fields.Float( string="Current Quantity (WMT)", store=True, default=0, digits=dp.get_precision('QAQC'), readonly=True, compute="_compute_curr_quantity" )
 	
@@ -70,7 +75,11 @@ class QaqcAssayPile(models.Model):
 					'location_id':[('location_id','=',order.warehouse_id.view_location_id.id )] ,
 					} 
 				}
-			
+	@api.onchange( 'lot_id' )	
+	def _change_wh(self):
+		for order in self:
+			order.product_id = order.lot_id.product_id.id
+
 	@api.depends("location_id", "product_id" )
 	def _compute_curr_quantity(self):
 		for order in self:
