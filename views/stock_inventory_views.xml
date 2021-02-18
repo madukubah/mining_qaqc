@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_production_stock_inventory_inherit_form" model="ir.ui.view">
+            <field name="name">stock.inventory.form</field>
+            <field name="model">stock.inventory</field>
+            <field name="inherit_id" ref="stock.view_inventory_form"/>
+            <field name="priority" eval="8"/>
+            <field name="arch" type="xml">
+                <xpath expr="//button[@name='prepare_inventory']" position="attributes">
+                    <attribute name="groups">stock.group_stock_user,mining_qaqc.qaqc_group_user</attribute>
+                </xpath>
+                <xpath expr="//button[@name='action_done']" position="attributes">
+                    <attribute name="groups">stock.group_stock_user,mining_qaqc.qaqc_group_manager</attribute>
+                </xpath>
+            </field>
+    </record>
+</odoo>

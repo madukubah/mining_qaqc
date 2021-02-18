@@ -18,6 +18,8 @@
         'views/partner.xml',
         "views/qaqc_assay_pile.xml",
         "views/qaqc_element_spec.xml",
+        "views/stock_inventory_views.xml",
+        "views/production_ritase_order.xml",
 
         "wizard/qaqc_coa_order_report.xml",
         "wizard/qaqc_assay_pile_report.xml",

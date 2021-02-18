@@ -51,4 +51,4 @@ class QaqcCoaOrderReport(models.TransientModel):
             'form': final_dict,
             'element_names': element_names,
         }
-        return self.env['report'].get_action(self,'mining_qaqc.qaqc_coa_order_temp', data=datas)
+        return self.env['report'].with_context( landscape=True ).get_action(self,'mining_qaqc.qaqc_coa_order_temp', data=datas)

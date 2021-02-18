@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_production_production_ritase_order_inherit_form" model="ir.ui.view">
+            <field name="name">production.ritase.order.form</field>
+            <field name="model">production.ritase.order</field>
+            <field name="inherit_id" ref="mining_production.view_production_ritase_order_form"/>
+            <field name="priority" eval="8"/>
+            <field name="arch" type="xml">
+                <xpath expr="//button[@name='action_draft']" position="attributes">
+                    <attribute name="groups">mining_production.production_group_manager,mining_qaqc.qaqc_group_user</attribute>
+                </xpath>
+                <xpath expr="//button[@name='action_confirm']" position="attributes">
+                    <attribute name="groups">mining_production.production_group_manager,mining_qaqc.qaqc_group_user</attribute>
+                </xpath>
+                <xpath expr="//button[@name='action_cancel']" position="attributes">
+                    <attribute name="groups">mining_production.production_group_manager,mining_qaqc.qaqc_group_user</attribute>
+                </xpath>
+            </field>
+    </record>
+</odoo>

@@ -49,14 +49,13 @@ class QaqcCoa(models.Model):
 	product_id = fields.Many2one('product.product', 'Material', domain=[('type', 'in', ['product', 'consu'])], required=True, states=READONLY_STATES )
 	product_uom = fields.Many2one(
             'product.uom', 'Product Unit of Measure', 
-            required=True,
-			domain=[ ('category_id.name','=',"Mining")  ],
-            default=lambda self: self._context.get('product_uom', False), states=READONLY_STATES)
-	quantity = fields.Float( string="Actual Quantity (WMT)", default=0, digits=dp.get_precision('QAQC'), states=READONLY_STATES, store=True )
-	curr_quantity = fields.Float( string="Current Quantity (WMT)", store=True, default=0, digits=dp.get_precision('QAQC'), readonly=True, compute="_compute_curr_quantity" )
+            readonly=True,
+            related="product_id.uom_id" )
+	quantity = fields.Float( string="Quantity Confirmed", default=0, digits=dp.get_precision('QAQC'), states=READONLY_STATES, store=True )
+	curr_quantity = fields.Float( string="Current Quantity", store=True, default=0, digits=dp.get_precision('QAQC'), readonly=True, compute="_compute_curr_quantity" )
 
-	rit = fields.Float( string="Rit", default=0, digits=0, states=READONLY_STATES, compute="_compute_ton_p_rit" )
-	ton_p_rit = fields.Float( string="Ton/Rit", default=0, digits=0, states=READONLY_STATES, compute="_compute_ton_p_rit" )
+	# rit = fields.Float( string="Rit", default=0, digits=0, states=READONLY_STATES, compute="_compute_ton_p_rit" )
+	# ton_p_rit = fields.Float( string="Ton/Rit", default=0, digits=0, states=READONLY_STATES, compute="_compute_ton_p_rit" )
 	surveyor_id	= fields.Many2one('res.partner', string='Surveyor', required=True, domain=[ ('is_surveyor','=',True)], states=READONLY_STATES )
 	main_surveyor	= fields.Boolean( string='Is Main Surveyor', default=False, compute="compute_main_surveyor", help="Technical field" )
 	element_specs = fields.One2many(
@@ -154,14 +153,13 @@ class QaqcCoa(models.Model):
 				product_qty = order.product_id.with_context({'location' : order.location_id.id})
 				order.curr_quantity = product_qty.qty_available
 	
-	@api.depends("product_uom", "curr_quantity")
-	def _compute_ton_p_rit(self):
-		for order in self:
-			if( order.product_uom ):
-				order.rit = order.product_id.uom_id._compute_quantity( order.curr_quantity , order.product_uom ) 
-				order.ton_p_rit = order.curr_quantity / ( order.rit if order.rit else 1 )
+	# @api.depends("product_uom", "curr_quantity")
+	# def _compute_ton_p_rit(self):
+	# 	for order in self:
+	# 		if( order.product_uom ):
+	# 			order.rit = order.product_id.uom_id._compute_quantity( order.curr_quantity , order.product_uom ) 
+	# 			order.ton_p_rit = order.curr_quantity / ( order.rit if order.rit else 1 )
 				
-
 	@api.onchange("surveyor_id" )
 	def _surveyor_change(self):
 		for order in self:
