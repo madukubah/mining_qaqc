@@ -37,7 +37,13 @@ class QaqcAssayPile(models.Model):
 		)
 
 	curr_quantity = fields.Float( string="Current Quantity (WMT)", default=0, digits=dp.get_precision('QAQC'), readonly=True, compute="_compute_curr_quantity", store=True )
-	
+
+	layer_type = fields.Selection([
+        ( "limonite" , 'Limonite'),
+        ( "saprolite" , 'Saprolite'),
+        ] , string='Type', index=True, 
+		store=True )
+
 	element_specs = fields.One2many(
         'qaqc.element.spec',
         'assay_pile_id',
