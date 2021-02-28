@@ -36,7 +36,7 @@ class QaqcAssayPile(models.Model):
 		readonly=True
 		)
 
-	curr_quantity = fields.Float( string="Current Quantity (WMT)", default=0, digits=dp.get_precision('QAQC'), readonly=True, compute="_compute_curr_quantity" )
+	curr_quantity = fields.Float( string="Current Quantity (WMT)", default=0, digits=dp.get_precision('QAQC'), readonly=True, compute="_compute_curr_quantity", store=True )
 
 	layer_type = fields.Selection([
         ( "limonite" , 'Limonite'),
