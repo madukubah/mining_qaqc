@@ -30,6 +30,7 @@ class QaqcAssayPileReport(models.TransientModel):
         final_dict = {}
         loc_coa_dict = {}
         for assay_pile in assay_piles:
+            assay_pile._compute_curr_quantity( )
             row = {}
             row["date"] = assay_pile.date
             row["doc_name"] = assay_pile.name
