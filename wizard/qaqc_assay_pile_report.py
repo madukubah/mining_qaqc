@@ -22,7 +22,7 @@ class QaqcAssayPileReport(models.TransientModel):
 
     @api.multi
     def action_print(self):       
-        assay_piles = self.env['qaqc.assay.pile'].search([ ( 'active', '=', True ), ( 'state', 'in', ['confirm', 'done' ] ) ])
+        assay_piles = self.env['qaqc.assay.pile'].search([ ( 'active', '=', True ) ])
         element_names = []
         for element_id in self.element_ids:
             element_names += [ element_id.name ]
