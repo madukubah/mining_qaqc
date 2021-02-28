@@ -34,7 +34,7 @@ class QaqcAssayPileReport(models.TransientModel):
             row = {}
             row["date"] = assay_pile.date
             row["doc_name"] = assay_pile.name
-            row["location_name"] = assay_pile.location_id.name
+            # row["location_name"] = assay_pile.location_id.name
             row["lot_name"] = assay_pile.lot_id.name
             row["quantity"] = assay_pile.quantity
             row["state"] = assay_pile.state

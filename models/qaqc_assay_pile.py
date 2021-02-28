@@ -61,14 +61,7 @@ class QaqcAssayPile(models.Model):
         'Active', default=True,
         help="If unchecked, it will allow you to hide the rule without removing it.")
 
-	@api.onchange( 'warehouse_id' )	
-	def _change_wh(self):
-		for order in self:
-			return {
-				'domain':{
-					'location_id':[('location_id','=',order.warehouse_id.view_location_id.id )] ,
-					} 
-				}
+
 	@api.onchange( 'lot_id' )	
 	def _change_wh(self):
 		for order in self:
