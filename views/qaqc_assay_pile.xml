@@ -12,6 +12,7 @@
                 <field name="lot_id" />
                 <field name="product_id" />
                 <field name="curr_quantity" />
+                <field name="layer_type" />
                 <field name="state" />
                 <field name="active" invisible="1" />
             </tree>

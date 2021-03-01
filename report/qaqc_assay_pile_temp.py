@@ -35,6 +35,7 @@ class ReportMining_qaqc_qaqc_assay_pile_Temp(models.AbstractModel):
             'doc_ids': data.get('ids'),
             'doc_model': data.get('model'),
             'data': data['form'],
+            'type': data['type'],
             'element_names': data['element_names'],
             'date': datetime.datetime.now().strftime("%d/%m/%Y"),
 

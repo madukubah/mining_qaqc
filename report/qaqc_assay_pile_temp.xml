@@ -4,7 +4,7 @@
         <t t-call="report.external_layout">
             <div class="page">
                 <div class="oe_structure" >
-
+                    <t t-if="type == 'detail'" >
                         <div class="row">
                             <center>
                                 <b>
@@ -19,7 +19,7 @@
                         </div>
                         <br/>
 
-                        <t t-foreach="data.keys()" t-as="location">
+                        <t t-foreach="data.keys()" t-as="location" style="page-break-after: always;" >
                             <div class="row">
                                 <center>
                                     <b>
@@ -27,51 +27,116 @@
                                     </b>
                                 </center>
                             </div>
-
                             <table class="table table-condensed table-striped">
                                 <thead>
                                     <tr>
                                         <th>Date</th>
-                                        <!-- <th class="text-center">Name</th> -->
-                                        <!-- <th class="text-center">Location</th> -->
                                         <th class="text-center">Lot</th>
                                         <th class="text-center">Quantity (WMT)</th>
-                                        <!-- <th class="text-center">Status</th> -->
+                                        <th class="text-center">Status</th>
                                         <t t-foreach="element_names" t-as="element_name">
                                             <th class="text-center" t-esc="element_name" ></th>
                                         </t>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr t-foreach="data[location]" t-as="line">
+                                    <tr t-foreach="data[location]['list']" t-as="line">
                                         <td>
                                             <span t-esc="line['date']"/>
                                         </td>
-                                        <!-- <td class="text-center">
-                                            <span t-esc="line['doc_name']"/>
-                                        </td> -->
-                                        <!-- <td class="text-center">
-                                            <span t-esc="line['location_name']"/>
-                                        </td> -->
                                         <td class="text-center">
                                             <span t-esc="line['lot_name']"/>
                                         </td>
                                         <td class="text-center">
                                             <span t-esc="line['quantity']"/>
                                         </td>
-                                        <!-- <td class="text-center">
-                                            <span t-esc="line['state']"/>
-                                        </td> -->
+                                        <td class="text-center">
+                                            <span t-esc="line['layer_type']"/>
+                                        </td>
                                         <t t-foreach="element_names" t-as="element_name">
                                             <td class="text-center">
                                                 <span t-esc="line[element_name]"/>
                                             </td>
                                         </t>
-                                    </tr>            
+                                    </tr>   
+                                    <tr style="background-color:yellow" >
+                                        <td style="background-color:yellow" > 
+                                        </td>
+                                        <td style="background-color:yellow" > 
+                                        </td>
+                                        <td style="background-color:yellow" class="text-center">
+                                            <span t-esc="data[location]['summary']['quantity']"/>
+                                        </td>
+                                        <td style="background-color:yellow" >
+                                        </td>
+                                        <t t-foreach="element_names" t-as="element_name">
+                                            <td class="text-center" style="background-color:yellow">
+                                                <span t-esc="data[location]['summary'][element_name]"/>
+                                            </td>
+                                        </t>
+                                    </tr>         
                                 </tbody>
                             </table>
 
                         </t>
+                    </t>
+                    <t t-if="type == 'summary'" >
+                        <div class="row">
+                            <center>
+                                <b>
+                                    <h4>Assay Result Stockyard Report</h4>
+                                </b>
+                            </center>
+                            <center>
+                                <b>
+                                    <span t-esc="date"/>
+                                </b>
+                            </center>
+                        </div>
+                        <br/>
+
+                        <div class="row">
+                            <center>
+                                <b>
+                                    <h4><span t-esc="location"/></h4>
+                                </b>
+                            </center>
+                        </div>
+
+                        <table class="table table-condensed table-striped">
+                            <thead>
+                                <tr>
+                                    <th>No</th>
+                                    <th class="text-center">Stockyard</th>
+                                    <th class="text-center">Quantity (WMT)</th>
+                                    <t t-foreach="element_names" t-as="element_name">
+                                        <th class="text-center" t-esc="element_name" ></th>
+                                    </t>
+                                    <!-- <th class="text-center">Status</th> -->
+                                </tr>
+                            </thead>
+                            <tbody> 
+                                <t t-set="_no" t-value="1"/>
+                                <tr t-foreach="data.keys()" t-as="location" >
+                                    <td>
+                                        <span t-esc="_no"/>
+                                        <t t-set="_no" t-value="_no+1"/>
+                                    </td>
+                                    <td>
+                                        <span t-esc="location"/>
+                                    </td>
+                                    <td class="text-center">
+                                        <span t-esc="data[location]['summary']['quantity']"/>
+                                    </td>
+                                    <t t-foreach="element_names" t-as="element_name">
+                                        <td class="text-center">
+                                            <span t-esc="data[location]['summary'][element_name]"/>
+                                        </td>
+                                    </t>
+                                </tr>         
+                            </tbody>
+                        </table>
+                    </t>
                 </div>
             </div>
         </t>
