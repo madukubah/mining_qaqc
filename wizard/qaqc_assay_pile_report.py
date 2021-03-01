@@ -107,7 +107,9 @@ class QaqcAssayPileReport(models.TransientModel):
                     assay = loc_coa_dict[ location.name ]["summary"][ element_id.name+"_ton" ] / loc_coa_dict[ location.name ]["summary"]["quantity"]
                     loc_coa_dict[ location.name ]["summary"][ element_id.name ] = round(assay, 2)
 
-        loc_coa_dict["Waiting Assay Result"] = waiting
+        if self.type == "summary":
+            loc_coa_dict["Waiting Assay Result"] = waiting
+            
         final_dict = loc_coa_dict
         datas = {
             'ids': self.ids,
