@@ -51,7 +51,7 @@ class QaqcCoa(models.Model):
             'product.uom', 'Product Unit of Measure', 
             readonly=True,
             related="product_id.uom_id" )
-	quantity = fields.Float( string="Quantity Confirmed", default=0, digits=dp.get_precision('QAQC'), states=READONLY_STATES, store=True )
+	quantity = fields.Float( string="Quantity Confirmed", default=0, digits=dp.get_precision('QAQC'), store=True )
 	curr_quantity = fields.Float( string="Current Quantity", store=True, default=0, digits=dp.get_precision('QAQC'), readonly=True, compute="_compute_curr_quantity" )
 
 	# rit = fields.Float( string="Rit", default=0, digits=0, states=READONLY_STATES, compute="_compute_ton_p_rit" )
@@ -62,7 +62,7 @@ class QaqcCoa(models.Model):
         'qaqc.element.spec',
         'coa_order_id',
         string='Elements Specifications',
-        copy=True, states=READONLY_STATES )
+        copy=True )
 	state = fields.Selection([
         ('draft', 'Draft'), 
 		('cancel', 'Cancelled'),
