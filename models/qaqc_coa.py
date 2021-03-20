@@ -10,7 +10,7 @@ _logger = logging.getLogger( __name__ )
 class QaqcCoa(models.Model):
 	_name = "qaqc.coa.order"
 	_inherit = ['mail.thread', 'ir.needaction_mixin']
-	_order = "id desc"
+	_order = "date desc"
 
 	@api.multi
 	def _check_quantity(self):
@@ -29,9 +29,9 @@ class QaqcCoa(models.Model):
         'cancel': [('readonly', True)],
     }
 	name = fields.Char(string="Name", size=100 , required=True, states=READONLY_STATES )
-	date = fields.Date('Report Date', help='',  default=fields.Datetime.now , states=READONLY_STATES  )
-	initial_date = fields.Date('Date of Initial', help='', required=True, states=READONLY_STATES  )
-	final_date = fields.Date('Date of Final', help='', required=True, states=READONLY_STATES  )
+	date = fields.Date('Report Date', help='',  default=fields.Datetime.now )
+	initial_date = fields.Date('Date of Initial', help='', required=True )
+	final_date = fields.Date('Date of Final', help='', required=True )
 	barge_id = fields.Many2one('shipping.barge', string='Barge', states=READONLY_STATES, domain=[ ('active','=',True)], required=True, change_default=True, index=True, track_visibility='always')
 
 	warehouse_id = fields.Many2one(
@@ -114,15 +114,15 @@ class QaqcCoa(models.Model):
 	def create(self, values):
 		CoaOrder = self.env['qaqc.coa.order']
 		barge = self.env['shipping.barge'].search([ ( "id", "=", values["barge_id"] ) ])
-		coa_orders = []
-		# if values.get("location_id", False) :
-		coa_orders = CoaOrder.search([ ( "location_id", "=", barge.location_id.id ), ( "surveyor_id", "=", values["surveyor_id"] ), ( "product_id", "=", values["product_id"] ), ( "active", "=", True ) ])
-		for coa_order in coa_orders:
-			if coa_order.state == "cancel" :
-				continue
-			if coa_order.state != "done" :
-					raise UserError(_('Cannot create this file because there is similar file with same location, material and surveyor ( %s ).') % (coa_order.name))
-			coa_order.write({'active': False})
+		# coa_orders = []
+		# # if values.get("location_id", False) :
+		# coa_orders = CoaOrder.search([ ( "location_id", "=", barge.location_id.id ), ( "surveyor_id", "=", values["surveyor_id"] ), ( "product_id", "=", values["product_id"] ), ( "active", "=", True ) ])
+		# for coa_order in coa_orders:
+		# 	if coa_order.state == "cancel" :
+		# 		continue
+		# 	if coa_order.state != "done" :
+		# 			raise UserError(_('Cannot create this file because there is similar file with same location, material and surveyor ( %s ).') % (coa_order.name))
+		# 	coa_order.write({'active': False})
 
 		seq = self.env['ir.sequence'].next_by_code('qaqc_barge')
 		values["name"] = seq + "/" + values["name"]
