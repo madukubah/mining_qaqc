@@ -30,7 +30,7 @@
                         <button name="action_draft" string="Set to Draft" type="object" states="confirm" class="btn-primary" groups="mining_qaqc.qaqc_group_user" />
                         <button name="action_reload" string="Reload" type="object" class="btn-primary" attrs="{'invisible': [('state', 'in', ('done', 'confirm', 'cancel'))]}" groups="mining_qaqc.qaqc_group_user" />
                         <button name="action_confirm" string="Final" type="object" states="draft" class="btn-primary" groups="mining_qaqc.qaqc_group_user" />
-                        <!-- <button name="action_done" string="Done" type="object" states="confirm" class="btn-primary" groups="mining_qaqc.qaqc_group_manager"  /> -->
+                        <button name="action_done" string="Done" type="object" states="confirm" class="btn-primary" groups="mining_qaqc.qaqc_group_manager"  />
                         <!-- <button name="action_view_change_product_quantity" string="Update Qty" class="btn-primary" type="object" attrs="{'invisible': [ '|', ('product_id', '=', False ), '|', ('state', '!=', 'draft' ), ('main_surveyor', '=', False )]}" groups="mining_qaqc.qaqc_group_manager" /> -->
                         <button name="action_cancel" states="draft,confirm" string="Cancel" type="object" groups="mining_qaqc.qaqc_group_manager" />
                         <field name="state" widget="statusbar" statusbar_visible="draft,confirm,done"/>
@@ -48,6 +48,7 @@
                             </h1>
                         </div>
                         <group>
+                            <field name="coa_ref_id" />
                             <field name="date" />
                             <field name="barge_id" />
                             <field name="warehouse_id" />

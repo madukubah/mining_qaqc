@@ -13,6 +13,17 @@ class QaqcCoa(models.Model):
 	_order = "date desc"
 
 	@api.multi
+	def _sync_coa(self):
+		for order in self:
+			coa_ref_id = order.coa_ref_id
+			if coa_ref_id :
+				if order.barge_id.id == coa_ref_id.barge_id.id :
+					return True
+				else : 
+					raise UserError(_("COA Cannot Sync With Its Renew" ) )
+			return False
+
+	@api.multi
 	def _check_quantity(self):
 		for order in self:
 			if order.surveyor_id.surveyor != "main" :
@@ -20,7 +31,8 @@ class QaqcCoa(models.Model):
 			order._compute_curr_quantity()
 			product_qty = order.product_id.with_context({'location' : order.location_id.id})
 			if ( order.quantity > product_qty.qty_available ) :
-				raise UserError(_("Actual Quantity Cannot Bigger Than Qty on Location ( Qty on Location is %s )" % product_qty.qty_available ) )	
+				if not order._sync_coa():
+					raise UserError(_("Actual Quantity Cannot Bigger Than Qty on Location ( Qty on Location is %s )" % product_qty.qty_available ) )	
 
 	READONLY_STATES = {
         'draft': [('readonly', False)],
@@ -33,6 +45,8 @@ class QaqcCoa(models.Model):
 	initial_date = fields.Date('Date of Initial', help='', required=True )
 	final_date = fields.Date('Date of Final', help='', required=True )
 	barge_id = fields.Many2one('shipping.barge', string='Barge', states=READONLY_STATES, domain=[ ('active','=',True)], required=True, change_default=True, index=True, track_visibility='always')
+
+	coa_ref_id = fields.Many2one('qaqc.coa.order', string='COA Renew From', states=READONLY_STATES )
 
 	warehouse_id = fields.Many2one(
             'stock.warehouse', 'Origin Warehouse',
@@ -152,14 +166,7 @@ class QaqcCoa(models.Model):
 			if( order.location_id and order.product_id ):
 				product_qty = order.product_id.with_context({'location' : order.location_id.id})
 				order.curr_quantity = product_qty.qty_available
-	
-	# @api.depends("product_uom", "curr_quantity")
-	# def _compute_ton_p_rit(self):
-	# 	for order in self:
-	# 		if( order.product_uom ):
-	# 			order.rit = order.product_id.uom_id._compute_quantity( order.curr_quantity , order.product_uom ) 
-	# 			order.ton_p_rit = order.curr_quantity / ( order.rit if order.rit else 1 )
-				
+			
 	@api.onchange("surveyor_id" )
 	def _surveyor_change(self):
 		for order in self:
