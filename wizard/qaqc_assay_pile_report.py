@@ -82,6 +82,16 @@ class QaqcAssayPileReport(models.TransientModel):
                 assay_piles = self.env['qaqc.assay.pile'].search([ ("lot_id", "=", lot_id ) ], limit=1)
                 if not assay_piles : 
                     waiting["summary"]["quantity"] += qty
+                    row = {}
+                    row["date"] = assay_pile.date
+                    row["lot_name"] = "[waiting] "+assay_pile.lot_id.name
+                    row["quantity"] = qty
+                    row["layer_type"] = "waiting"
+                    for element_id in self.element_ids:
+                        row[ element_id.name ] = 0
+                        row[ element_id.name+"_ton" ] = 0
+                    loc_coa_dict[ location.name ]["list"] += [row]
+
                 for assay_pile in assay_piles :
                     row = {}
                     row["date"] = assay_pile.date
