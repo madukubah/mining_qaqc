@@ -86,6 +86,7 @@ class QaqcAssayPileReport(models.TransientModel):
                     row["date"] = assay_pile.date
                     row["lot_name"] = "[waiting] "+assay_pile.lot_id.name
                     row["quantity"] = qty
+                    loc_coa_dict[ location.name ]["summary"]["quantity"] += row["quantity"]
                     row["layer_type"] = "waiting"
                     for element_id in self.element_ids:
                         row[ element_id.name ] = 0
